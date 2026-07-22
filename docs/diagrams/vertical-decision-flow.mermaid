@@ -1,0 +1,27 @@
+flowchart TD
+    U[Usuario / modo demo] --> AGG[Agregación local por minuto]
+    AGG --> SA{Anomalía sostenida?\nscore>=0.78 x3 ventanas}
+    SA -- no --> DN0[do_nothing local]
+    SA -- si --> CTX{Contexto protegido\no quiet mode?}
+    CTX -- si --> LP1[postpone / do_nothing\ndecision_source=local_policy]
+    CTX -- no --> COOL{Cooldown activo?}
+    COOL -- si --> DN1[do_nothing local]
+    COOL -- no --> CLIENT[AgentApiClient]
+    CLIENT --> API[API Gateway REST\napi key + throttling + quota]
+    API --> L[Lambda TypeScript]
+    L --> IDEM{event_id repetido?}
+    IDEM -- si --> CACHED[Devuelve decisión previa]
+    IDEM -- no --> CACHE{Cache-aside por banda?}
+    CACHE -- hit --> CH[decision_source=cache]
+    CACHE -- miss --> BUD{ServerBudgetGate\n+ kill switch}
+    BUD -- excede --> FBB[Fallback local\nSERVER_BUDGET_LIMIT]
+    BUD -- ok --> CB{Circuit breaker}
+    CB -- abierto --> FBC[Fallback local\nPROVIDER_ERROR_FALLBACK]
+    CB -- cerrado --> MP[ModelProvider]
+    MP --> MOCK[MockModelProvider\nBEDROCK_ENABLED=false]
+    MP -.futuro.-> BR[BedrockModelProvider\nConverse + tool use]
+    MOCK --> GUARD[Guardas posteriores\nenforcePostLlm]
+    GUARD --> RESP[Decisión estructurada\naction + reason_code + expires_at]
+    RESP --> DV[Doble validación en desktop]
+    DV --> EXE[Ejecuta o posterga intervención]
+    EXE --> FB[Feedback]

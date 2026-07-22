@@ -1,0 +1,187 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  LAMINAR - Orquestador de decisión (REST API + Lambda). FinOps por diseño.
+  NO desplegar sin supervisión. BedrockEnabled=false por defecto.
+
+Parameters:
+  BedrockEnabled:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Default: "false"
+    Description: Interruptor maestro. Debe permanecer false hasta el despliegue supervisado (F0-03).
+  BedrockModelId:
+    Type: String
+    Default: ""
+    Description: modelId confirmado en consola. Vacío mientras F0-03 esté BLOCKED. No fijar por memoria.
+  MaxCallsPerHour:
+    Type: Number
+    Default: 20
+  MaxCallsPerDay:
+    Type: Number
+    Default: 100
+  MaxOutputTokens:
+    Type: Number
+    Default: 180
+  LogRetentionDays:
+    Type: Number
+    Default: 7
+    AllowedValues: [3, 5, 7]
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Timeout: 8
+    MemorySize: 256
+    Architectures: [x86_64]
+    Environment:
+      Variables:
+        BEDROCK_ENABLED: !Ref BedrockEnabled
+        BEDROCK_MODEL_ID: !Ref BedrockModelId
+        MAX_CALLS_PER_HOUR: !Ref MaxCallsPerHour
+        MAX_CALLS_PER_DAY: !Ref MaxCallsPerDay
+        MAX_OUTPUT_TOKENS: !Ref MaxOutputTokens
+        KILL_SWITCH: "false"
+
+Resources:
+  LaminarApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: v1
+      # REST API para poder exigir API key, usage plan, throttling y quota.
+      Auth:
+        ApiKeyRequired: true
+        UsagePlan:
+          CreateUsagePlan: PER_API
+          Throttle:
+            RateLimit: 1        # 1 request/segundo
+            BurstLimit: 2
+          Quota:
+            Limit: 1000         # 1000 requests/mes
+            Period: MONTH
+      MethodSettings:
+        - ResourcePath: "/*"
+          HttpMethod: "*"
+          ThrottlingRateLimit: 1
+          ThrottlingBurstLimit: 2
+
+  DecisionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      # Ejecutar `npm run build` en ../backend antes de `sam build`.
+      CodeUri: ../backend/dist
+      Handler: handlers/decision.handler
+      ReservedConcurrentExecutions: 2
+      Events:
+        Decisions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref LaminarApi
+            Path: /decisions
+            Method: post
+      # IAM MÍNIMO — plantilla PENDIENTE DE CONFIRMACIÓN (F0-03).
+      # Se deja comentado a propósito: no habilitar hasta tener modelId y despliegue supervisado.
+      # Policies:
+      #   - Statement:
+      #       - Effect: Allow
+      #         Action: ["bedrock:InvokeModel"]
+      #         Resource: !Sub "arn:aws:bedrock:${AWS::Region}::foundation-model/${BedrockModelId}"
+
+  FeedbackFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../backend/dist
+      Handler: handlers/feedback.handler
+      ReservedConcurrentExecutions: 2
+      Events:
+        Feedback:
+          Type: Api
+          Properties:
+            RestApiId: !Ref LaminarApi
+            Path: /feedback
+            Method: post
+
+  # --- Canal de AGREGACIÓN B2B2E (separado del canal de decisiones) ---
+  AggregationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../backend/dist
+      Handler: handlers/team-metrics.handler
+      ReservedConcurrentExecutions: 2
+      Environment:
+        Variables:
+          AGGREGATES_TABLE: !Ref AggregatesTable
+      Events:
+        TeamMetrics:
+          Type: Api
+          Properties:
+            RestApiId: !Ref LaminarApi
+            Path: /team-metrics
+            Method: post
+      # IAM MÍNIMO (plantilla). Descomentar en despliegue supervisado.
+      # Policies:
+      #   - DynamoDBCrudPolicy: { TableName: !Ref AggregatesTable }
+
+  TeamSummaryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../backend/dist
+      Handler: handlers/team-summary.handler
+      ReservedConcurrentExecutions: 2
+      Environment:
+        Variables:
+          AGGREGATES_TABLE: !Ref AggregatesTable
+      Events:
+        TeamSummary:
+          Type: Api
+          Properties:
+            RestApiId: !Ref LaminarApi
+            Path: /teams/{teamId}/summary
+            Method: get
+      # Policies:
+      #   - DynamoDBReadPolicy: { TableName: !Ref AggregatesTable }
+
+  # --- DynamoDB on-demand, TTL, sin índices secundarios (solo agregados) ---
+  AggregatesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk    # ORG#<org>#TEAM#<team>
+          KeyType: HASH
+        - AttributeName: sk    # WINDOW#<window_start>
+          KeyType: RANGE
+      TimeToLiveSpecification:
+        AttributeName: ttl     # epoch; retención 30 días
+        Enabled: true
+
+  DecisionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${DecisionFunction}"
+      RetentionInDays: !Ref LogRetentionDays
+
+  AggregationLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${AggregationFunction}"
+      RetentionInDays: !Ref LogRetentionDays
+
+  FeedbackLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${FeedbackFunction}"
+      RetentionInDays: !Ref LogRetentionDays
+
+Outputs:
+  ApiBaseUrl:
+    Description: URL base de la API (stage v1)
+    Value: !Sub "https://${LaminarApi}.execute-api.${AWS::Region}.amazonaws.com/v1"
+  BedrockEnabledOut:
+    Description: Estado del interruptor de Bedrock
+    Value: !Ref BedrockEnabled

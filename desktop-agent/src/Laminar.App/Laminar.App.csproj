@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- WPF requiere Windows. Este proyecto NO compila en Linux/macOS. -->
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <UseWPF>true</UseWPF>
+    <!-- WinForms habilitado solo para el icono de bandeja (System.Windows.Forms.NotifyIcon). -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <!-- Evita choques WinForms/WPF (Color, Application, KeyEventArgs...) al desactivar usings globales -->
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Laminar.Domain/Laminar.Domain.csproj" />
+    <ProjectReference Include="../Laminar.Friction/Laminar.Friction.csproj" />
+    <ProjectReference Include="../Laminar.AgentClient/Laminar.AgentClient.csproj" />
+    <ProjectReference Include="../Laminar.Interventions/Laminar.Interventions.csproj" />
+  </ItemGroup>
+</Project>

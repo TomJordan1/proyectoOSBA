@@ -1,0 +1,85 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FF1389CF-FF49-4F7A-981D-6917B4D4FEDF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laminar.AgentClient", "src\Laminar.AgentClient\Laminar.AgentClient.csproj", "{B15A4C2A-8641-49B6-A714-6CF0F6E1FCD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laminar.App", "src\Laminar.App\Laminar.App.csproj", "{0C7FC2D1-9377-465E-8BF5-2EED00410F00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laminar.Context", "src\Laminar.Context\Laminar.Context.csproj", "{FD420977-FF54-4778-B40C-C14054568978}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laminar.DemoConsole", "src\Laminar.DemoConsole\Laminar.DemoConsole.csproj", "{4F8B52E5-008F-4915-8A51-5C16FD280C93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laminar.Domain", "src\Laminar.Domain\Laminar.Domain.csproj", "{6C495EA6-E799-4449-AED3-3EB1E67F36E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laminar.Friction", "src\Laminar.Friction\Laminar.Friction.csproj", "{E1D333E4-2CB8-4E85-88DE-382678F937C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laminar.Interventions", "src\Laminar.Interventions\Laminar.Interventions.csproj", "{8F979F91-882A-40F9-B46F-E264FAB62A25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laminar.TeamMetrics", "src\Laminar.TeamMetrics\Laminar.TeamMetrics.csproj", "{966B42FA-74DC-43B8-8EE8-BB96F547A42B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FB8401BA-B90E-46F9-8315-A77C0F4B9FF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laminar.Domain.Tests", "tests\Laminar.Domain.Tests\Laminar.Domain.Tests.csproj", "{84E9E907-97EC-4266-839F-313736AFE2E2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B15A4C2A-8641-49B6-A714-6CF0F6E1FCD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B15A4C2A-8641-49B6-A714-6CF0F6E1FCD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B15A4C2A-8641-49B6-A714-6CF0F6E1FCD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B15A4C2A-8641-49B6-A714-6CF0F6E1FCD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C7FC2D1-9377-465E-8BF5-2EED00410F00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C7FC2D1-9377-465E-8BF5-2EED00410F00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C7FC2D1-9377-465E-8BF5-2EED00410F00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C7FC2D1-9377-465E-8BF5-2EED00410F00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD420977-FF54-4778-B40C-C14054568978}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD420977-FF54-4778-B40C-C14054568978}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD420977-FF54-4778-B40C-C14054568978}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD420977-FF54-4778-B40C-C14054568978}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F8B52E5-008F-4915-8A51-5C16FD280C93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F8B52E5-008F-4915-8A51-5C16FD280C93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F8B52E5-008F-4915-8A51-5C16FD280C93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F8B52E5-008F-4915-8A51-5C16FD280C93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C495EA6-E799-4449-AED3-3EB1E67F36E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C495EA6-E799-4449-AED3-3EB1E67F36E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C495EA6-E799-4449-AED3-3EB1E67F36E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C495EA6-E799-4449-AED3-3EB1E67F36E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1D333E4-2CB8-4E85-88DE-382678F937C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1D333E4-2CB8-4E85-88DE-382678F937C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1D333E4-2CB8-4E85-88DE-382678F937C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1D333E4-2CB8-4E85-88DE-382678F937C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F979F91-882A-40F9-B46F-E264FAB62A25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F979F91-882A-40F9-B46F-E264FAB62A25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F979F91-882A-40F9-B46F-E264FAB62A25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F979F91-882A-40F9-B46F-E264FAB62A25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{966B42FA-74DC-43B8-8EE8-BB96F547A42B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{966B42FA-74DC-43B8-8EE8-BB96F547A42B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{966B42FA-74DC-43B8-8EE8-BB96F547A42B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{966B42FA-74DC-43B8-8EE8-BB96F547A42B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84E9E907-97EC-4266-839F-313736AFE2E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84E9E907-97EC-4266-839F-313736AFE2E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84E9E907-97EC-4266-839F-313736AFE2E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84E9E907-97EC-4266-839F-313736AFE2E2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B15A4C2A-8641-49B6-A714-6CF0F6E1FCD3} = {FF1389CF-FF49-4F7A-981D-6917B4D4FEDF}
+		{0C7FC2D1-9377-465E-8BF5-2EED00410F00} = {FF1389CF-FF49-4F7A-981D-6917B4D4FEDF}
+		{FD420977-FF54-4778-B40C-C14054568978} = {FF1389CF-FF49-4F7A-981D-6917B4D4FEDF}
+		{4F8B52E5-008F-4915-8A51-5C16FD280C93} = {FF1389CF-FF49-4F7A-981D-6917B4D4FEDF}
+		{6C495EA6-E799-4449-AED3-3EB1E67F36E6} = {FF1389CF-FF49-4F7A-981D-6917B4D4FEDF}
+		{E1D333E4-2CB8-4E85-88DE-382678F937C0} = {FF1389CF-FF49-4F7A-981D-6917B4D4FEDF}
+		{8F979F91-882A-40F9-B46F-E264FAB62A25} = {FF1389CF-FF49-4F7A-981D-6917B4D4FEDF}
+		{966B42FA-74DC-43B8-8EE8-BB96F547A42B} = {FF1389CF-FF49-4F7A-981D-6917B4D4FEDF}
+		{84E9E907-97EC-4266-839F-313736AFE2E2} = {FB8401BA-B90E-46F9-8315-A77C0F4B9FF7}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,62 @@
+[
+  {
+    "schema_version": "1.0",
+    "organization_id": "org_demo",
+    "team_id": "backend",
+    "installation_token": "tok-f1",
+    "window_start": "2026-07-22T10:00:00Z",
+    "window_minutes": 15,
+    "friction_band": "elevated",
+    "avg_friction": 0.7,
+    "peak_friction": 0.85,
+    "interventions": 1,
+    "helpful_feedback": 1,
+    "active_contributor": true,
+    "scenario": "demo"
+  },
+  {
+    "schema_version": "1.0",
+    "organization_id": "org_demo",
+    "team_id": "backend",
+    "installation_token": "tok-f2",
+    "window_start": "2026-07-22T10:00:00Z",
+    "window_minutes": 15,
+    "friction_band": "moderate",
+    "avg_friction": 0.6,
+    "peak_friction": 0.75,
+    "interventions": 0,
+    "helpful_feedback": 0,
+    "active_contributor": true,
+    "scenario": "demo"
+  },
+  {
+    "schema_version": "1.0",
+    "organization_id": "org_demo",
+    "team_id": "backend",
+    "installation_token": "tok-f3",
+    "window_start": "2026-07-22T10:00:00Z",
+    "window_minutes": 15,
+    "friction_band": "high",
+    "avg_friction": 0.78,
+    "peak_friction": 0.9,
+    "interventions": 1,
+    "helpful_feedback": 1,
+    "active_contributor": true,
+    "scenario": "demo"
+  },
+  {
+    "schema_version": "1.0",
+    "organization_id": "org_demo",
+    "team_id": "backend",
+    "installation_token": "tok-f4",
+    "window_start": "2026-07-22T10:00:00Z",
+    "window_minutes": 15,
+    "friction_band": "moderate",
+    "avg_friction": 0.5,
+    "peak_friction": 0.65,
+    "interventions": 0,
+    "helpful_feedback": 0,
+    "active_contributor": true,
+    "scenario": "demo"
+  }
+]

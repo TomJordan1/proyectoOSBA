@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://laminar.local/schemas/decision-response.json",
+  "title": "DecisionResponse",
+  "description": "Decisión estructurada devuelta por el backend. Validada de nuevo por el desktop antes de ejecutar.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "decision_id", "event_id", "action", "arguments", "reason_code", "explanation", "expires_at", "decision_source", "fallback"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "decision_id": { "type": "string", "format": "uuid" },
+    "event_id": { "type": "string", "format": "uuid" },
+    "action": {
+      "type": "string",
+      "enum": ["do_nothing", "show_subtle_notification", "postpone_intervention", "launch_bubble_recovery", "enable_quiet_mode"]
+    },
+    "arguments": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration_seconds": { "type": "integer", "minimum": 0, "maximum": 60 },
+        "intensity": { "type": "string", "enum": ["low", "medium"] }
+      }
+    },
+    "reason_code": {
+      "type": "string",
+      "enum": [
+        "STABLE_PATTERN",
+        "SUSTAINED_FRICTION_CONTEXT_AVAILABLE",
+        "PROTECTED_CONTEXT",
+        "QUIET_MODE",
+        "COOLDOWN_ACTIVE",
+        "PENDING_RECOVERY_RESUMED",
+        "SERVER_BUDGET_LIMIT",
+        "PROVIDER_ERROR_FALLBACK",
+        "INVALID_MODEL_RESPONSE_FALLBACK",
+        "UNKNOWN_ACTION_DOWNGRADED"
+      ]
+    },
+    "explanation": { "type": "string", "maxLength": 240 },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "decision_source": {
+      "type": "string",
+      "enum": ["bedrock", "cache", "local_policy", "mock"]
+    },
+    "fallback": { "type": "boolean" }
+  }
+}

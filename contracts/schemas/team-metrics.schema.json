@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://laminar.local/schemas/team-metrics.json",
+  "title": "TeamMetricsPacket",
+  "description": "Paquete agregado (canal de agregación, distinto del canal de decisiones). Nivel C de gobierno de datos: nunca identidad humana. POST /v1/team-metrics.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "organization_id", "team_id", "window_start", "window_minutes", "friction_band", "avg_friction", "peak_friction", "interventions", "helpful_feedback", "active_contributor", "scenario"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "organization_id": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "team_id": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "installation_token": {
+      "type": "string",
+      "description": "Token rotativo NO humano, solo para contar contribuyentes y deduplicar dentro de una ventana. No es user_id.",
+      "maxLength": 128
+    },
+    "window_start": { "type": "string", "format": "date-time" },
+    "window_minutes": { "type": "integer", "enum": [15] },
+    "friction_band": { "type": "string", "enum": ["low", "moderate", "elevated", "high"] },
+    "avg_friction": { "type": "number", "minimum": 0, "maximum": 1 },
+    "peak_friction": { "type": "number", "minimum": 0, "maximum": 1 },
+    "interventions": { "type": "integer", "minimum": 0 },
+    "helpful_feedback": { "type": "integer", "minimum": 0 },
+    "active_contributor": { "type": "boolean" },
+    "scenario": { "type": "string", "enum": ["demo", "real"] }
+  },
+  "not": {
+    "anyOf": [
+      { "required": ["user_id"] },
+      { "required": ["name"] },
+      { "required": ["email"] },
+      { "required": ["employee_id"] }
+    ]
+  }
+}

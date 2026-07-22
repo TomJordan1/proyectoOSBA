@@ -1,0 +1,39 @@
+# === Secretos y entorno ===
+.env
+.env.*
+!.env.example
+*.pem
+samconfig.toml
+
+# === Artefactos de build ===
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/.aws-sam/
+cdk.out/
+coverage/
+
+# === IDE / sistema ===
+.vs/
+.idea/
+*.user
+*.suo
+*.log
+.DS_Store
+
+# === Interno / sensible: NO publicar en GitHub ===
+# Configuración y skills del agente
+.claude/
+CLAUDE.md
+# Hojas de ruta, historial y notas de avance (uso interno)
+HOJA_RUTA.md
+HOJA_RUTA_B2B2E.md
+HISTORIAL_CAMBIOS.md
+NEXT_SESSION.md
+# Prompts y material de reestructuración interno
+PROMPT_*.md
+00_LEER_PRIMERO.md
+Reestruturacion/
+# Empaquetados
+*.zip

@@ -1,0 +1,13 @@
+{
+  "resource": "/decisions",
+  "path": "/decisions",
+  "httpMethod": "POST",
+  "headers": {
+    "content-type": "application/json",
+    "x-api-key": "DEMO"
+  },
+  "body": "{\"schema_version\":\"1.0\",\"event_id\":\"22222222-2222-2222-2222-222222222222\",\"timestamp\":\"2026-07-22T12:05:00Z\",\"friction\":{\"score\":0.86,\"sustained_minutes\":4,\"delete_z\":1.9,\"switch_z\":2.2,\"cursor_z\":1.4},\"context\":{\"meeting_active\":false,\"screen_sharing\":false,\"fullscreen_active\":false,\"quiet_mode\":false,\"session_minutes\":72,\"last_intervention_minutes\":48},\"preferences\":{\"preferred_recovery\":\"bubbles\",\"reduced_motion\":false,\"max_duration_seconds\":45},\"recent_feedback\":\"none\"}",
+  "requestContext": {
+    "requestId": "demo-friction"
+  }
+}

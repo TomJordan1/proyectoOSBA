@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://laminar.local/schemas/feedback.json",
+  "title": "Feedback",
+  "description": "POST /v1/feedback. Endpoint separado; save_feedback no es una acción de decisión.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "decision_id", "result"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "decision_id": { "type": "string", "format": "uuid" },
+    "result": { "type": "string", "enum": ["helpful", "not_now", "false_positive", "dismissed"] },
+    "reason": { "type": "string", "enum": ["good_timing", "bad_timing", "not_relevant", "too_frequent", "other"] },
+    "recovery_completed": { "type": "boolean" },
+    "duration_seconds": { "type": "integer", "minimum": 0, "maximum": 60 }
+  }
+}

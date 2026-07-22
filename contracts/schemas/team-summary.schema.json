@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://laminar.local/schemas/team-summary.json",
+  "title": "TeamSummary",
+  "description": "Resumen colectivo para Laminar Teams. Sin individuos, sin rankings. GET /v1/teams/{teamId}/summary.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["team_id", "period_start", "period_end", "contributor_count", "privacy_status", "confidence"],
+  "properties": {
+    "team_id": { "type": "string", "minLength": 1 },
+    "period_start": { "type": "string", "format": "date-time" },
+    "period_end": { "type": "string", "format": "date-time" },
+    "contributor_count": { "type": "integer", "minimum": 0 },
+    "privacy_status": { "type": "string", "enum": ["visible", "insufficient_group", "delayed", "unavailable"] },
+    "avg_friction": { "type": "number", "minimum": 0, "maximum": 1 },
+    "trend": { "type": "string", "enum": ["increasing", "stable", "decreasing"] },
+    "helpful_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+    "confidence": { "type": "string", "enum": ["exploratory", "indicative"] },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string", "enum": ["REVIEW_MEETING_DENSITY", "REVIEW_DELIVERY_LOAD", "REVIEW_FOCUS_TIME", "NO_ACTION_NEEDED"] },
+          "message": { "type": "string", "maxLength": 240 }
+        }
+      }
+    }
+  }
+}

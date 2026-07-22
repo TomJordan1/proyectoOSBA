@@ -1,0 +1,17 @@
+# Copia a samconfig.toml y ajusta. NO commitear samconfig.toml con datos de cuenta.
+version = 0.1
+
+[default.global.parameters]
+stack_name = "laminar-dev"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true          # revisar SIEMPRE el changeset
+resolve_s3 = true
+region = "PENDIENTE_F0-03"         # fijar tras confirmar región/modelo
+parameter_overrides = "BedrockEnabled=false BedrockModelId=\"\""
+tags = "Project=Laminar Environment=Dev"

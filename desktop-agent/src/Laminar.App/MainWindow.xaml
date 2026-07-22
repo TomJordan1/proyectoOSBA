@@ -1,0 +1,41 @@
+<Window x:Class="Laminar.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Laminar — modo demo" Height="380" Width="440"
+        Background="#0F1420" WindowStartupLocation="CenterScreen">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="Laminar" Foreground="#E6EDF3" FontSize="24" FontWeight="SemiBold"/>
+            <TextBlock Text="Fricción digital · local-first · sin capturar contenido"
+                       Foreground="#8B98A5" FontSize="12" Margin="0,2,0,12"/>
+        </StackPanel>
+
+        <WrapPanel Grid.Row="1" Margin="0,0,0,12">
+            <Button x:Name="BtnA" Content="A · Estable" Width="120" Margin="0,0,8,8" Click="OnScenario"/>
+            <Button x:Name="BtnB" Content="B · Fricción" Width="120" Margin="0,0,8,8" Click="OnScenario"/>
+            <Button x:Name="BtnC" Content="C · Protegido" Width="120" Margin="0,0,8,8" Click="OnScenario"/>
+            <Button x:Name="BtnD" Content="D · Reanudar" Width="120" Margin="0,0,8,8" Click="OnScenario"/>
+        </WrapPanel>
+
+        <Border Grid.Row="2" Background="#161C2A" CornerRadius="8" Padding="14">
+            <StackPanel>
+                <TextBlock x:Name="ActionText" Foreground="#E6EDF3" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                <TextBlock x:Name="ReasonText" Foreground="#8B98A5" FontSize="12" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                <TextBlock x:Name="SourceText" Foreground="#5B6673" FontSize="11" Margin="0,10,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,12,0,0">
+            <CheckBox x:Name="QuietMode" Content="No molestar" Foreground="#8B98A5" VerticalAlignment="Center"/>
+            <CheckBox x:Name="ReducedMotion" Content="Reducir movimiento" Foreground="#8B98A5" Margin="16,0,0,0" VerticalAlignment="Center"/>
+            <Button Content="Ocultar" Width="80" Margin="16,0,0,0" Click="OnExit"/>
+        </StackPanel>
+    </Grid>
+</Window>

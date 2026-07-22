@@ -1,0 +1,18 @@
+{
+  "generated": "demo",
+  "teams": {
+    "backend": {
+      "team_id": "backend", "period_start": "2026-07-15T00:00:00Z", "period_end": "2026-07-22T23:59:59Z",
+      "contributor_count": 7, "privacy_status": "visible", "avg_friction": 0.54,
+      "trend": "increasing", "helpful_rate": 0.76, "confidence": "exploratory",
+      "weekly": [0.42, 0.45, 0.51, 0.49, 0.58, 0.63, 0.54],
+      "recommendations": [
+        { "code": "REVIEW_MEETING_DENSITY", "message": "La fricción digital agregada aumentó respecto a la línea base semanal; revisar la concentración de reuniones y validar con el equipo." }
+      ]
+    },
+    "frontend": {
+      "team_id": "frontend", "period_start": "2026-07-15T00:00:00Z", "period_end": "2026-07-22T23:59:59Z",
+      "contributor_count": 4, "privacy_status": "insufficient_group", "confidence": "exploratory"
+    }
+  }
+}

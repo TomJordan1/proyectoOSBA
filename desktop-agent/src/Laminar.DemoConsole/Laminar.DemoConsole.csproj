@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Laminar.Domain/Laminar.Domain.csproj" />
+    <ProjectReference Include="../Laminar.Friction/Laminar.Friction.csproj" />
+    <ProjectReference Include="../Laminar.AgentClient/Laminar.AgentClient.csproj" />
+  </ItemGroup>
+</Project>

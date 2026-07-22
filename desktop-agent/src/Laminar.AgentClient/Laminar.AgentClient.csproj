@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Laminar.Domain/Laminar.Domain.csproj" />
+    <ProjectReference Include="../Laminar.Friction/Laminar.Friction.csproj" />
+    <ProjectReference Include="../Laminar.Context/Laminar.Context.csproj" />
+  </ItemGroup>
+</Project>

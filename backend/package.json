@@ -1,0 +1,29 @@
+{
+  "name": "laminar-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Orquestador serverless TypeScript de LAMINAR (API Gateway + Lambda + Bedrock). Motor de decisión agéntico con guardas deterministas y FinOps.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "demo": "tsx scripts/demo.ts",
+    "demo:b2b2e": "tsx scripts/demo-b2b2e.ts"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5",
+    "tsx": "^4.19.0"
+  }
+}

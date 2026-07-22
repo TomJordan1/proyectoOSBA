@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://laminar.local/schemas/decision-request.json",
+  "title": "DecisionRequest",
+  "description": "Petición content-blind enviada por el desktop a POST /v1/decisions. Solo métricas abstractas y contexto booleano.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "event_id", "timestamp", "friction", "context", "preferences"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "event_id": { "type": "string", "format": "uuid" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "friction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "sustained_minutes", "delete_z", "switch_z", "cursor_z"],
+      "properties": {
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "sustained_minutes": { "type": "integer", "minimum": 0 },
+        "delete_z": { "type": "number" },
+        "switch_z": { "type": "number" },
+        "cursor_z": { "type": "number" }
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["meeting_active", "screen_sharing", "fullscreen_active", "quiet_mode", "session_minutes", "last_intervention_minutes"],
+      "properties": {
+        "meeting_active": { "type": "boolean" },
+        "screen_sharing": { "type": "boolean" },
+        "fullscreen_active": { "type": "boolean" },
+        "quiet_mode": { "type": "boolean" },
+        "session_minutes": { "type": "integer", "minimum": 0 },
+        "last_intervention_minutes": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "preferences": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["preferred_recovery", "reduced_motion", "max_duration_seconds"],
+      "properties": {
+        "preferred_recovery": { "type": "string", "enum": ["bubbles", "breathing", "none"] },
+        "reduced_motion": { "type": "boolean" },
+        "max_duration_seconds": { "type": "integer", "minimum": 0, "maximum": 60 }
+      }
+    },
+    "recent_feedback": {
+      "type": "string",
+      "enum": ["helpful", "not_now", "false_positive", "dismissed", "none"]
+    }
+  }
+}
