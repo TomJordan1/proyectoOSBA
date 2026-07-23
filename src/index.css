@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+  body { @apply text-slate-100 font-sans overflow-x-hidden; min-width: 320px; background: #0b1120; -webkit-font-smoothing: antialiased; }
+  button, a { -webkit-tap-highlight-color: transparent; }
+  ::selection { background-color: #22d3ee; color: #0b1120; }
+}
+
+@layer components {
+  .glass-panel { background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+  .glass-nav { background: rgba(11, 17, 32, 0.74); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+  .lindy-gradient-text { background: linear-gradient(135deg, #fff 0%, #cbd5e1 42%, #22d3ee 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .glow-button { box-shadow: 0 0 25px rgba(6, 182, 212, 0.35); }
+  .glow-button:hover { box-shadow: 0 0 42px rgba(6, 182, 212, 0.55); }
+  .section-black { background: #020306; box-shadow: inset 0 1px rgba(255,255,255,.04), inset 0 -1px rgba(255,255,255,.04); }
+
+  .interactive-card {
+    position: relative;
+    isolation: isolate;
+    transition: transform 380ms cubic-bezier(.2,.8,.2,1), box-shadow 380ms ease, background-color 380ms ease, border-color 380ms ease;
+  }
+  .interactive-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    z-index: 2;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(125deg, rgba(34,211,238,.08), rgba(103,232,249,.95), rgba(59,130,246,.5), rgba(34,211,238,.08));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 320ms ease;
+  }
+  .interactive-card::after {
+    content: '';
+    position: absolute;
+    inset: 18% 10% -16%;
+    z-index: -1;
+    border-radius: inherit;
+    background: radial-gradient(circle, rgba(34,211,238,.15), transparent 68%);
+    filter: blur(24px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 320ms ease;
+  }
+  .interactive-card:hover,
+  .interactive-card:focus-visible,
+  .interactive-card:focus-within {
+    transform: translate3d(0, -7px, 0) scale(1.012);
+    border-color: rgba(103,232,249,.36);
+    box-shadow: 0 22px 70px rgba(6,182,212,.17), 0 0 0 1px rgba(34,211,238,.08);
+  }
+  .interactive-card:hover::before,
+  .interactive-card:focus-visible::before,
+  .interactive-card:focus-within::before,
+  .interactive-card:hover::after,
+  .interactive-card:focus-visible::after,
+  .interactive-card:focus-within::after { opacity: 1; }
+  .interactive-card:focus-visible { outline: 2px solid #67e8f9; outline-offset: 4px; }
+
+  .pricing-card {
+    position: relative;
+    transform: translate3d(0, 0, 0);
+    transform-style: preserve-3d;
+    transition: transform 480ms cubic-bezier(.16,1,.3,1), box-shadow 480ms cubic-bezier(.16,1,.3,1), border-color 360ms ease, background-color 360ms ease;
+  }
+  .pricing-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, transparent 18%, rgba(103,232,249,.85), transparent 82%) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    opacity: 0;
+    transition: opacity 360ms ease;
+    pointer-events: none;
+  }
+  .pricing-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(115deg, transparent 28%, rgba(255,255,255,.11) 46%, transparent 64%);
+    opacity: 0;
+    transform: translate3d(-38%, 0, 0);
+    transition: transform 720ms cubic-bezier(.16,1,.3,1), opacity 300ms ease;
+    pointer-events: none;
+  }
+  .pricing-card:hover,
+  .pricing-card:focus-within {
+    transform: translate3d(0, -11px, 0) scale(1.025);
+    z-index: 20;
+    border-color: rgba(103, 232, 249, 0.52);
+    box-shadow: 0 28px 72px rgba(6,182,212,.2), 0 0 0 1px rgba(103,232,249,.08);
+  }
+  .pricing-card:hover::before,
+  .pricing-card:focus-within::before { opacity: 1; }
+  .pricing-card:hover::after,
+  .pricing-card:focus-within::after { opacity: 1; transform: translate3d(38%, 0, 0); }
+}
+
+.loader { --color-one: #22d3ee; --color-two: #0284c7; --color-three: rgba(34, 211, 238, 0.5); --color-four: rgba(2, 132, 199, 0.5); --color-five: rgba(34, 211, 238, 0.15); --time-animation: 2s; --size: 1.1; position: relative; width: 100px; height: 100px; border-radius: 50%; transform: scale(var(--size)); box-shadow: 0 0 35px 0 var(--color-three), 0 15px 45px 0 var(--color-four); animation: colorize calc(var(--time-animation) * 3) ease-in-out infinite; }
+.loader.awakening-orb,
+.loader.hero-kanny-orb { --size: 2.35; box-shadow: 0 0 55px 12px rgba(34,211,238,.5), 0 30px 90px rgba(2,132,199,.45); }
+.loader.inline-kanny-orb { --size: 1.62; }
+.loader.login-kanny-orb { --size: 1.65; }
+.loader.dashboard-kanny-orb { --size: 0.85; }
+.loader::before { content: ''; position: absolute; inset: 0; width: 100px; height: 100px; border-radius: 50%; border-top: solid 1px var(--color-one); border-bottom: solid 1px var(--color-two); background: linear-gradient(180deg, var(--color-five), var(--color-four)); box-shadow: inset 0 10px 10px 0 var(--color-three), inset 0 -10px 10px 0 var(--color-four); z-index: 1; pointer-events: none; }
+.loader .box { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(180deg, var(--color-one) 30%, var(--color-two) 70%); mask: url(#clipping); -webkit-mask: url(#clipping); position: absolute; inset: 0; z-index: 0; }
+.loader svg { position: absolute; width: 0; height: 0; }
+.kanny-eyes { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; gap: 14px; z-index: 10; pointer-events: none; }
+.kanny-eye { width: 14px; height: 14px; background: white; border-radius: 50%; box-shadow: 0 0 10px #fff; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.kanny-eye--sleep { width: 20px; height: 4px; border-radius: 9999px; background: white; transform: scaleY(0.5); }
+.kanny-pupil { width: 5px; height: 5px; background: #083344; border-radius: 50%; position: absolute; top: 4px; left: 4px; transition: transform 0.15s ease-out; }
+#clipping { filter: contrast(15); animation: roundness calc(var(--time-animation) / 2) linear infinite; }
+#clipping polygon { filter: blur(7px); }
+#clipping polygon:nth-child(1) { transform-origin: 75% 25%; transform: rotate(90deg); }
+#clipping polygon:nth-child(2) { transform-origin: 50% 50%; animation: rotation var(--time-animation) linear infinite reverse; }
+#clipping polygon:nth-child(3) { transform-origin: 50% 60%; animation: rotation var(--time-animation) linear infinite; animation-delay: calc(var(--time-animation) / -3); }
+#clipping polygon:nth-child(4) { transform-origin: 40% 40%; animation: rotation var(--time-animation) linear infinite reverse; }
+#clipping polygon:nth-child(5) { transform-origin: 40% 40%; animation: rotation var(--time-animation) linear infinite reverse; animation-delay: calc(var(--time-animation) / -2); }
+#clipping polygon:nth-child(6) { transform-origin: 60% 40%; animation: rotation var(--time-animation) linear infinite; }
+#clipping polygon:nth-child(7) { transform-origin: 60% 40%; animation: rotation var(--time-animation) linear infinite; animation-delay: calc(var(--time-animation) / -1.5); }
+@keyframes rotation { to { transform: rotate(360deg); } }
+@keyframes roundness { 0%, 100% { filter: contrast(15); } 20%, 40% { filter: contrast(3); } 60% { filter: contrast(15); } }
+@keyframes colorize { 0%, 100% { filter: hue-rotate(0deg); } 20% { filter: hue-rotate(-15deg); } 40% { filter: hue-rotate(-30deg); } 60% { filter: hue-rotate(-45deg); } 80% { filter: hue-rotate(-20deg); } }
+
+@media (max-width: 767px) {
+  .kanny-companion { left: auto !important; right: 1rem; bottom: 1.25rem; transform: none !important; }
+  .kanny-companion .loader { --size: 0.62; margin: -16px; }
+  .loader.awakening-orb,
+  .loader.hero-kanny-orb { --size: 1.8; }
+  .loader.inline-kanny-orb { --size: 1.3; }
+  .pricing-card:hover, .pricing-card:focus-within { transform: translate3d(0, -7px, 0) scale(1.012); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  .interactive-card:hover, .interactive-card:focus-visible, .interactive-card:focus-within,
+  .pricing-card:hover, .pricing-card:focus-within { transform: none; }
+}
