@@ -1,17 +1,21 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 
 import ParticlesBackground from './components/ParticlesBackground'
 import AwakeningOverlay from './components/AwakeningOverlay'
 import KandaceExperience from './components/KandaceExperience'
 import Navbar from './components/Navbar'
-import Pricing from './components/Pricing'
-import FAQ from './components/FAQ'
-import Footer from './components/Footer'
 import LoginPage from './components/LoginPage'
 import DashboardPage from './components/DashboardPage'
-import ScrollDrivenNavigation from './components/ScrollDrivenNavigation'
 import { useLandingScrollAnimations } from './hooks/useLandingScrollAnimations'
+
+// Secciones de la landing que quedan debajo del pliegue (fold) inicial: se
+// dividen en su propio chunk y solo se descargan cuando React las necesita,
+// en vez de formar parte del bundle inicial junto con el hero/cinemática.
+const Pricing = lazy(() => import('./components/Pricing'))
+const FAQ = lazy(() => import('./components/FAQ'))
+const Footer = lazy(() => import('./components/Footer'))
+const ScrollDrivenNavigation = lazy(() => import('./components/ScrollDrivenNavigation'))
 
 type Route = 'landing' | 'login' | 'dashboard'
 
@@ -103,7 +107,11 @@ export default function App() {
       {route === 'landing' && (
         <>
           {introVisible && <AwakeningOverlay onTransitionStart={revealLanding} onArrive={finishIntro} />}
-          {cinematicComplete && <ScrollDrivenNavigation />}
+          {cinematicComplete && (
+            <Suspense fallback={null}>
+              <ScrollDrivenNavigation />
+            </Suspense>
+          )}
           <motion.div
             className="relative z-[70]"
             initial={false}
@@ -121,8 +129,10 @@ export default function App() {
             animate={{ opacity: landingVisible ? 1 : 0 }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
-            <main><KandaceExperience heroReady={heroReady} /><Pricing /><FAQ /></main>
-            <Footer />
+            <Suspense fallback={null}>
+              <main><KandaceExperience heroReady={heroReady} /><Pricing /><FAQ /></main>
+              <Footer />
+            </Suspense>
           </motion.div>
         </>
       )}
