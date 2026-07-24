@@ -60,8 +60,8 @@ class Particle {
   draw(context: CanvasRenderingContext2D, isDark: boolean) {
     context.beginPath()
     context.arc(this.x, this.y, this.size * this.depth, 0, Math.PI * 2)
-    const alpha = this.depth * (isDark ? 0.42 : 0.32) + (isDark ? 0.12 : 0.08)
-    context.fillStyle = isDark ? `rgba(103, 232, 249, ${alpha})` : `rgba(14, 116, 144, ${alpha})`
+    const alpha = this.depth * (isDark ? 0.42 : 0.52) + (isDark ? 0.12 : 0.18)
+    context.fillStyle = isDark ? `rgba(103, 232, 249, ${alpha})` : `rgba(6, 182, 212, ${alpha})`
     context.fill()
   }
 }
