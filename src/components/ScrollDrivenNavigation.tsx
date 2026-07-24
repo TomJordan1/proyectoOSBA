@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 
 const SECTIONS = [
@@ -10,6 +10,7 @@ const SECTIONS = [
 
 export default function ScrollDrivenNavigation() {
   const [active, setActive] = useState('home')
+  const clickLockRef = useRef<number | null>(null)
   const { scrollYProgress } = useScroll()
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 110,
@@ -20,53 +21,63 @@ export default function ScrollDrivenNavigation() {
   const glowY = useTransform(smoothProgress, [0, 1], ['8vh', '78vh'])
   const glowScale = useTransform(smoothProgress, [0, 0.5, 1], [0.7, 1.15, 0.8])
 
+  const handleNavClick = useCallback((sectionId: string) => {
+    // Lock the active state to the clicked section and ignore observer
+    // updates while the smooth scroll is in progress.
+    if (clickLockRef.current) window.clearTimeout(clickLockRef.current)
+    setActive(sectionId)
+    clickLockRef.current = window.setTimeout(() => {
+      clickLockRef.current = null
+    }, 1200)
+  }, [])
+
   useEffect(() => {
     const elements = SECTIONS.map(({ id }) => document.getElementById(id)).filter(
       (element): element is HTMLElement => Boolean(element),
     )
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Near bottom of page → last section wins (FAQ is short and would
-        // otherwise lose to Pricing's higher intersectionRatio).
-        const scrollBottom = window.scrollY + window.innerHeight
-        const docHeight = document.documentElement.scrollHeight
-        if (docHeight - scrollBottom < window.innerHeight * 0.25) {
-          const lastSection = SECTIONS[SECTIONS.length - 1]
-          if (document.getElementById(lastSection.id)) {
-            setActive(lastSection.id)
-            return
-          }
-        }
+    const computeActive = () => {
+      // Skip if a click-lock is active (smooth scroll in progress)
+      if (clickLockRef.current) return
 
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
-        if (visible?.target.id) setActive(visible.target.id)
-      },
-      { rootMargin: '-15% 0px -35% 0px', threshold: [0, 0.1, 0.25, 0.5] },
-    )
+      const scrollBottom = window.scrollY + window.innerHeight
+      const docHeight = document.documentElement.scrollHeight
 
-    // Cuando el scroll está casi arriba del todo, el hero es la sección activa.
-    // Cerca del final de la página, la última sección (FAQ) es la activa.
-    const onScroll = () => {
       if (window.scrollY < window.innerHeight * 0.3) {
         setActive('home')
         return
       }
-      const scrollBottom = window.scrollY + window.innerHeight
-      const docHeight = document.documentElement.scrollHeight
+
       if (docHeight - scrollBottom < window.innerHeight * 0.25) {
         setActive(SECTIONS[SECTIONS.length - 1].id)
+        return
       }
+
+      // Find the section whose top is closest to (but above) the viewport center
+      const viewportCenter = window.scrollY + window.innerHeight * 0.35
+      let closest: string | null = null
+      let closestDist = Infinity
+
+      for (const el of elements) {
+        const top = el.offsetTop
+        const dist = Math.abs(top - viewportCenter)
+        if (top <= viewportCenter + window.innerHeight * 0.3 && dist < closestDist) {
+          closestDist = dist
+          closest = el.id
+        }
+      }
+
+      if (closest) setActive(closest)
     }
 
-    elements.forEach((element) => observer.observe(element))
+    const onScroll = () => {
+      computeActive()
+    }
+
     window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll()
+    computeActive()
 
     return () => {
-      observer.disconnect()
       window.removeEventListener('scroll', onScroll)
     }
   }, [])
@@ -96,6 +107,7 @@ export default function ScrollDrivenNavigation() {
             <a
               key={section.id}
               href={`#${section.id}`}
+              onClick={() => handleNavClick(section.id)}
               className="group flex min-h-8 items-center justify-end gap-3 rounded-full px-2 outline-none"
               aria-current={isActive ? 'location' : undefined}
               aria-label={`Ir a ${section.label}`}
