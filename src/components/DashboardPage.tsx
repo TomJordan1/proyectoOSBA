@@ -294,7 +294,7 @@ export default function DashboardPage({ email, onLogout }: DashboardPageProps) {
 
                 <div className="border-b border-white/[0.06] p-5">
                   <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-600">Estado actual</p>
-                  <div className="mt-4 flex items-center gap-4"><div className="flex h-20 w-20 shrink-0 items-center justify-center"><KannyOrb className="dashboard-kanny-orb" /></div><div><div className="flex items-center gap-2"><span className="h-2 w-2 animate-pulse rounded-full bg-emerald-300" /><p className="text-lg font-black text-white">Normal</p></div><p className="mt-1 text-[10px] leading-relaxed text-slate-500">42 min de concentración estable.</p></div></div>
+                  <div className="mt-4 flex items-center gap-4"><div className="flex h-20 w-20 shrink-0 items-center justify-center"><KannyOrb state="normal" /></div><div><div className="flex items-center gap-2"><span className="h-2 w-2 animate-pulse rounded-full bg-emerald-300" /><p className="text-lg font-black text-white">Normal</p></div><p className="mt-1 text-[10px] leading-relaxed text-slate-500">42 min de concentración estable.</p></div></div>
                   <button type="button" className="mt-4 flex w-full items-center justify-between rounded-xl border border-white/[0.07] bg-white/[0.025] px-3.5 py-3 text-left text-[10px] font-semibold text-slate-300 transition hover:border-cyan-300/20"><span className="flex items-center gap-2"><TimerReset className="h-4 w-4 text-cyan-300" />Programar pausa</span><ChevronDown className="h-3.5 w-3.5 -rotate-90" /></button>
                 </div>
 

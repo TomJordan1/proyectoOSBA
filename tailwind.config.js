@@ -23,24 +23,6 @@ export default {
         'card-glow': '0 0 40px rgba(6, 182, 212, 0.35)',
         'card-glow-strong': '0 0 50px rgba(6, 182, 212, 0.5)',
       },
-      keyframes: {
-        rotation: {
-          '0%': { transform: 'rotate(0deg)' },
-          '100%': { transform: 'rotate(360deg)' },
-        },
-        roundness: {
-          '0%, 100%': { filter: 'contrast(15)' },
-          '20%, 40%': { filter: 'contrast(3)' },
-          '60%': { filter: 'contrast(15)' },
-        },
-        colorize: {
-          '0%, 100%': { filter: 'hue-rotate(0deg)' },
-          '20%': { filter: 'hue-rotate(-15deg)' },
-          '40%': { filter: 'hue-rotate(-30deg)' },
-          '60%': { filter: 'hue-rotate(-45deg)' },
-          '80%': { filter: 'hue-rotate(-20deg)' },
-        },
-      },
     },
   },
   plugins: [],

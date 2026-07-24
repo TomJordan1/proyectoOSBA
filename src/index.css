@@ -107,38 +107,18 @@
   .pricing-card:focus-within::after { opacity: 1; transform: translate3d(38%, 0, 0); }
 }
 
-.loader { --color-one: #22d3ee; --color-two: #0284c7; --color-three: rgba(34, 211, 238, 0.5); --color-four: rgba(2, 132, 199, 0.5); --color-five: rgba(34, 211, 238, 0.15); --time-animation: 2s; --size: 1.1; position: relative; width: 100px; height: 100px; border-radius: 50%; transform: scale(var(--size)); box-shadow: 0 0 35px 0 var(--color-three), 0 15px 45px 0 var(--color-four); animation: colorize calc(var(--time-animation) * 3) ease-in-out infinite; }
-.loader.awakening-orb,
-.loader.hero-kanny-orb { --size: 2.35; box-shadow: 0 0 55px 12px rgba(34,211,238,.5), 0 30px 90px rgba(2,132,199,.45); }
-.loader.inline-kanny-orb { --size: 1.62; }
-.loader.login-kanny-orb { --size: 1.65; }
-.loader.dashboard-kanny-orb { --size: 0.85; }
-.loader::before { content: ''; position: absolute; inset: 0; width: 100px; height: 100px; border-radius: 50%; border-top: solid 1px var(--color-one); border-bottom: solid 1px var(--color-two); background: linear-gradient(180deg, var(--color-five), var(--color-four)); box-shadow: inset 0 10px 10px 0 var(--color-three), inset 0 -10px 10px 0 var(--color-four); z-index: 1; pointer-events: none; }
-.loader .box { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(180deg, var(--color-one) 30%, var(--color-two) 70%); mask: url(#clipping); -webkit-mask: url(#clipping); position: absolute; inset: 0; z-index: 0; }
-.loader svg { position: absolute; width: 0; height: 0; }
-.kanny-eyes { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; gap: 14px; z-index: 10; pointer-events: none; }
-.kanny-eye { width: 14px; height: 14px; background: white; border-radius: 50%; box-shadow: 0 0 10px #fff; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-.kanny-eye--sleep { width: 20px; height: 4px; border-radius: 9999px; background: white; transform: scaleY(0.5); }
-.kanny-pupil { width: 5px; height: 5px; background: #083344; border-radius: 50%; position: absolute; top: 4px; left: 4px; transition: transform 0.15s ease-out; }
-#clipping { filter: contrast(15); animation: roundness calc(var(--time-animation) / 2) linear infinite; }
-#clipping polygon { filter: blur(7px); }
-#clipping polygon:nth-child(1) { transform-origin: 75% 25%; transform: rotate(90deg); }
-#clipping polygon:nth-child(2) { transform-origin: 50% 50%; animation: rotation var(--time-animation) linear infinite reverse; }
-#clipping polygon:nth-child(3) { transform-origin: 50% 60%; animation: rotation var(--time-animation) linear infinite; animation-delay: calc(var(--time-animation) / -3); }
-#clipping polygon:nth-child(4) { transform-origin: 40% 40%; animation: rotation var(--time-animation) linear infinite reverse; }
-#clipping polygon:nth-child(5) { transform-origin: 40% 40%; animation: rotation var(--time-animation) linear infinite reverse; animation-delay: calc(var(--time-animation) / -2); }
-#clipping polygon:nth-child(6) { transform-origin: 60% 40%; animation: rotation var(--time-animation) linear infinite; }
-#clipping polygon:nth-child(7) { transform-origin: 60% 40%; animation: rotation var(--time-animation) linear infinite; animation-delay: calc(var(--time-animation) / -1.5); }
-@keyframes rotation { to { transform: rotate(360deg); } }
-@keyframes roundness { 0%, 100% { filter: contrast(15); } 20%, 40% { filter: contrast(3); } 60% { filter: contrast(15); } }
-@keyframes colorize { 0%, 100% { filter: hue-rotate(0deg); } 20% { filter: hue-rotate(-15deg); } 40% { filter: hue-rotate(-30deg); } 60% { filter: hue-rotate(-45deg); } 80% { filter: hue-rotate(-20deg); } }
+/* Orbe "Kanny" renderizado en <canvas> (ver src/lib/kannyEngine.ts).
+   El contenedor .kanny-orb siempre ocupa el 100% del bloque padre; el
+   tamaño real se controla desde el layout (Tailwind) que envuelve cada
+   instancia. .companion-orb es la única variante con tamaño propio, ya
+   que su contenedor no define dimensiones fijas. */
+.kanny-orb { position: relative; width: 100%; height: 100%; }
+.kanny-orb canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.companion-orb { width: 92px; height: 92px; }
 
 @media (max-width: 767px) {
   .kanny-companion { left: auto !important; right: 1rem; bottom: 1.25rem; transform: none !important; }
-  .kanny-companion .loader { --size: 0.62; margin: -16px; }
-  .loader.awakening-orb,
-  .loader.hero-kanny-orb { --size: 1.8; }
-  .loader.inline-kanny-orb { --size: 1.3; }
+  .kanny-companion .companion-orb { width: 58px; height: 58px; }
   .pricing-card:hover, .pricing-card:focus-within { transform: translate3d(0, -7px, 0) scale(1.012); }
 }
 

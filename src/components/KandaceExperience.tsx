@@ -58,7 +58,7 @@ function InlineKanny({ from }: { from: 'left' | 'right' }) {
     >
       <div className="absolute h-48 w-48 rounded-full bg-cyan-400/15 blur-3xl" />
       <div className="relative flex h-52 w-52 items-center justify-center">
-        <KannyOrb className="inline-kanny-orb" />
+        <KannyOrb state="normal" />
       </div>
     </motion.div>
   )
@@ -120,7 +120,7 @@ export default function KandaceExperience({ heroReady }: KandaceExperienceProps)
               transition={{ duration: 0.08 }}
             >
               <div className="absolute inset-7 rounded-full bg-cyan-400/20 blur-[60px]" />
-              <KannyOrb className="hero-kanny-orb" />
+              <KannyOrb state="afk" />
             </motion.div>
           </div>
 

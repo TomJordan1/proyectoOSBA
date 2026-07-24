@@ -33,7 +33,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       <div className="relative mx-auto grid min-h-[calc(100vh-6rem)] max-w-5xl items-center gap-10 lg:grid-cols-2">
         <section className="hidden text-center lg:block" aria-label="Bienvenida de Kanny">
           <div className="mx-auto flex h-56 w-56 items-center justify-center">
-            <KannyOrb className="login-kanny-orb" />
+            <KannyOrb state="normal" />
           </div>
           <p className="mt-5 text-xs font-bold uppercase tracking-[0.28em] text-cyan-300">Kanny te estaba esperando</p>
           <h1 className="mx-auto mt-4 max-w-md text-4xl font-black tracking-tight text-white">Tu bienestar, ahora en un solo lugar.</h1>

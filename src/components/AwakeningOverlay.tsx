@@ -107,7 +107,7 @@ export default function AwakeningOverlay({
           animate={awake ? { opacity: 0.85, scale: 1.35 } : { opacity: 0.22, scale: 0.82 }}
           transition={{ duration: 0.7 }}
         />
-        <KannyOrb sleeping={!awake} className="awakening-orb" />
+        <KannyOrb sleeping={!awake} state={awake ? 'normal' : 'afk'} />
       </motion.div>
     </div>
   )

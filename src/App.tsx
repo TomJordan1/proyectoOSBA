@@ -3,7 +3,6 @@ import { motion } from 'framer-motion'
 
 import ParticlesBackground from './components/ParticlesBackground'
 import AwakeningOverlay from './components/AwakeningOverlay'
-import { ClippingDefs } from './components/KannyOrb'
 import KandaceExperience from './components/KandaceExperience'
 import Navbar from './components/Navbar'
 import Pricing from './components/Pricing'
@@ -12,7 +11,6 @@ import Footer from './components/Footer'
 import LoginPage from './components/LoginPage'
 import DashboardPage from './components/DashboardPage'
 import ScrollDrivenNavigation from './components/ScrollDrivenNavigation'
-import { useEyeTracking } from './hooks/useEyeTracking'
 import { useLandingScrollAnimations } from './hooks/useLandingScrollAnimations'
 
 type Route = 'landing' | 'login' | 'dashboard'
@@ -74,7 +72,6 @@ export default function App() {
     }
   }, [cinematicComplete, route])
 
-  useEyeTracking(landingVisible || route !== 'landing')
   useLandingScrollAnimations(landingScopeRef, route === 'landing' && cinematicComplete)
 
   const revealLanding = useCallback(() => setLandingVisible(true), [])
@@ -98,7 +95,6 @@ export default function App() {
 
   return (
     <>
-      <ClippingDefs />
       <ParticlesBackground />
 
       {route === 'login' && <LoginPage onLogin={login} />}
