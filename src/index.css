@@ -26,25 +26,40 @@
   .glow-button { box-shadow: 0 0 25px rgba(6, 182, 212, 0.35); }
   .glow-button:hover { box-shadow: 0 0 42px rgba(6, 182, 212, 0.55); }
   /* Fondo con desvanecido en los bordes superior e inferior para que la
-     transición con las secciones vecinas sea gradual. Usa una curva tipo
-     "ease" (varios stops con alfa intermedio) en vez de una rampa lineal:
-     una rampa lineal seguida de color plano crea un quiebre de pendiente
-     que el ojo percibe como una línea nítida (efecto Mach band), incluso
-     cuando el color de fondo es continuo. El color base cambia según el tema. */
+     transición con las secciones vecinas sea gradual. Los stops siguen una
+     curva "smoothstep" (3t²-2t³, muestreada cada 10%) en vez de una rampa
+     lineal: smoothstep tiene pendiente (derivada) cero en ambos extremos,
+     así que se une sin ningún quiebre ni con la zona transparente ni con
+     la zona de color sólido. Una rampa lineal, aunque tenga varios stops
+     intermedios, siempre termina con pendiente distinta de cero justo antes
+     de volverse sólida, y ese quiebre residual es lo que el ojo percibe
+     como una línea nítida (efecto Mach band). El color base cambia según el tema. */
   .section-black {
     position: relative;
-    --fade: clamp(48px, 8vw, 120px);
+    --fade: clamp(64px, 10vw, 160px);
     background: linear-gradient(
       to bottom,
       rgba(238, 242, 248, 0) 0,
-      rgba(238, 242, 248, 0.16) calc(var(--fade) * 0.25),
+      rgba(238, 242, 248, 0.028) calc(var(--fade) * 0.1),
+      rgba(238, 242, 248, 0.104) calc(var(--fade) * 0.2),
+      rgba(238, 242, 248, 0.216) calc(var(--fade) * 0.3),
+      rgba(238, 242, 248, 0.352) calc(var(--fade) * 0.4),
       rgba(238, 242, 248, 0.5) calc(var(--fade) * 0.5),
-      rgba(238, 242, 248, 0.84) calc(var(--fade) * 0.75),
+      rgba(238, 242, 248, 0.648) calc(var(--fade) * 0.6),
+      rgba(238, 242, 248, 0.784) calc(var(--fade) * 0.7),
+      rgba(238, 242, 248, 0.896) calc(var(--fade) * 0.8),
+      rgba(238, 242, 248, 0.972) calc(var(--fade) * 0.9),
       rgba(238, 242, 248, 1) var(--fade),
       rgba(238, 242, 248, 1) calc(100% - var(--fade)),
-      rgba(238, 242, 248, 0.84) calc(100% - var(--fade) * 0.75),
+      rgba(238, 242, 248, 0.972) calc(100% - var(--fade) * 0.9),
+      rgba(238, 242, 248, 0.896) calc(100% - var(--fade) * 0.8),
+      rgba(238, 242, 248, 0.784) calc(100% - var(--fade) * 0.7),
+      rgba(238, 242, 248, 0.648) calc(100% - var(--fade) * 0.6),
       rgba(238, 242, 248, 0.5) calc(100% - var(--fade) * 0.5),
-      rgba(238, 242, 248, 0.16) calc(100% - var(--fade) * 0.25),
+      rgba(238, 242, 248, 0.352) calc(100% - var(--fade) * 0.4),
+      rgba(238, 242, 248, 0.216) calc(100% - var(--fade) * 0.3),
+      rgba(238, 242, 248, 0.104) calc(100% - var(--fade) * 0.2),
+      rgba(238, 242, 248, 0.028) calc(100% - var(--fade) * 0.1),
       rgba(238, 242, 248, 0) 100%
     );
   }
@@ -52,14 +67,26 @@
     background: linear-gradient(
       to bottom,
       rgba(2, 3, 6, 0) 0,
-      rgba(2, 3, 6, 0.16) calc(var(--fade) * 0.25),
+      rgba(2, 3, 6, 0.028) calc(var(--fade) * 0.1),
+      rgba(2, 3, 6, 0.104) calc(var(--fade) * 0.2),
+      rgba(2, 3, 6, 0.216) calc(var(--fade) * 0.3),
+      rgba(2, 3, 6, 0.352) calc(var(--fade) * 0.4),
       rgba(2, 3, 6, 0.5) calc(var(--fade) * 0.5),
-      rgba(2, 3, 6, 0.84) calc(var(--fade) * 0.75),
+      rgba(2, 3, 6, 0.648) calc(var(--fade) * 0.6),
+      rgba(2, 3, 6, 0.784) calc(var(--fade) * 0.7),
+      rgba(2, 3, 6, 0.896) calc(var(--fade) * 0.8),
+      rgba(2, 3, 6, 0.972) calc(var(--fade) * 0.9),
       rgba(2, 3, 6, 1) var(--fade),
       rgba(2, 3, 6, 1) calc(100% - var(--fade)),
-      rgba(2, 3, 6, 0.84) calc(100% - var(--fade) * 0.75),
+      rgba(2, 3, 6, 0.972) calc(100% - var(--fade) * 0.9),
+      rgba(2, 3, 6, 0.896) calc(100% - var(--fade) * 0.8),
+      rgba(2, 3, 6, 0.784) calc(100% - var(--fade) * 0.7),
+      rgba(2, 3, 6, 0.648) calc(100% - var(--fade) * 0.6),
       rgba(2, 3, 6, 0.5) calc(100% - var(--fade) * 0.5),
-      rgba(2, 3, 6, 0.16) calc(100% - var(--fade) * 0.25),
+      rgba(2, 3, 6, 0.352) calc(100% - var(--fade) * 0.4),
+      rgba(2, 3, 6, 0.216) calc(100% - var(--fade) * 0.3),
+      rgba(2, 3, 6, 0.104) calc(100% - var(--fade) * 0.2),
+      rgba(2, 3, 6, 0.028) calc(100% - var(--fade) * 0.1),
       rgba(2, 3, 6, 0) 100%
     );
   }
