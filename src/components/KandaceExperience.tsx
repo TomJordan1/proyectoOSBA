@@ -178,9 +178,13 @@ export default function KandaceExperience({ heroReady }: KandaceExperienceProps)
           </motion.div>
 
           <motion.div {...reveal} transition={{ duration: 0.7, delay: 0.1 }} className="interactive-card overflow-hidden rounded-[2rem] border border-black/10 bg-white/90 shadow-[0_30px_100px_rgba(2,132,199,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/80 dark:shadow-[0_30px_100px_rgba(2,132,199,0.16)]" tabIndex={0}>
-            <div className="flex items-center gap-2 border-b border-black/10 bg-black/[0.02] px-5 py-4 dark:border-white/10 dark:bg-white/[0.03]">
-              <span className="h-2.5 w-2.5 rounded-full bg-rose-400" /><span className="h-2.5 w-2.5 rounded-full bg-amber-300" /><span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-              <span className="ml-3 font-mono text-[11px] text-slate-500">Kanny State Simulator.exe</span>
+            <div className="flex items-center justify-between border-b border-black/10 bg-black/[0.02] px-5 py-3 dark:border-white/10 dark:bg-white/[0.03]">
+              <span className="font-mono text-[11px] text-slate-500">Kanny State Simulator.exe</span>
+              <div className="flex items-center">
+                <span className="flex h-7 w-10 items-center justify-center text-slate-500 hover:bg-white/10" aria-hidden="true"><svg width="10" height="1" viewBox="0 0 10 1"><rect width="10" height="1" fill="currentColor"/></svg></span>
+                <span className="flex h-7 w-10 items-center justify-center text-slate-500 hover:bg-white/10" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="0.5" y="0.5" width="9" height="9" stroke="currentColor" strokeWidth="1"/></svg></span>
+                <span className="flex h-7 w-10 items-center justify-center text-slate-500 hover:bg-rose-500/80 hover:text-white" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="1.2"/></svg></span>
+              </div>
             </div>
             <div className="p-6 sm:p-8">
               <div className="mb-6 flex items-center justify-between gap-4">
