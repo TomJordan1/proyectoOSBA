@@ -15,7 +15,19 @@
   .lindy-gradient-text { background: linear-gradient(135deg, #fff 0%, #cbd5e1 42%, #22d3ee 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
   .glow-button { box-shadow: 0 0 25px rgba(6, 182, 212, 0.35); }
   .glow-button:hover { box-shadow: 0 0 42px rgba(6, 182, 212, 0.55); }
-  .section-black { background: #020306; box-shadow: inset 0 1px rgba(255,255,255,.04), inset 0 -1px rgba(255,255,255,.04); }
+  /* Fondo negro con desvanecido en los bordes superior e inferior para que la
+     transición con las secciones vecinas (fondo #0b1120) sea gradual y no un
+     corte abrupto de color. */
+  .section-black {
+    position: relative;
+    background: linear-gradient(
+      to bottom,
+      transparent 0,
+      #020306 clamp(48px, 8vw, 120px),
+      #020306 calc(100% - clamp(48px, 8vw, 120px)),
+      transparent 100%
+    );
+  }
 
   .interactive-card {
     position: relative;
