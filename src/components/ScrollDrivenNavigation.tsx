@@ -27,6 +27,18 @@ export default function ScrollDrivenNavigation() {
 
     const observer = new IntersectionObserver(
       (entries) => {
+        // Near bottom of page → last section wins (FAQ is short and would
+        // otherwise lose to Pricing's higher intersectionRatio).
+        const scrollBottom = window.scrollY + window.innerHeight
+        const docHeight = document.documentElement.scrollHeight
+        if (docHeight - scrollBottom < window.innerHeight * 0.25) {
+          const lastSection = SECTIONS[SECTIONS.length - 1]
+          if (document.getElementById(lastSection.id)) {
+            setActive(lastSection.id)
+            return
+          }
+        }
+
         const visible = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
@@ -35,12 +47,17 @@ export default function ScrollDrivenNavigation() {
       { rootMargin: '-15% 0px -35% 0px', threshold: [0, 0.1, 0.25, 0.5] },
     )
 
-    // Cuando el scroll está casi arriba del todo, el hero es la sección activa
-    // aunque el observer no lo reporte (la zona de observación puede quedar
-    // por debajo de lo visible cuando el hero está centrado verticalmente).
+    // Cuando el scroll está casi arriba del todo, el hero es la sección activa.
+    // Cerca del final de la página, la última sección (FAQ) es la activa.
     const onScroll = () => {
       if (window.scrollY < window.innerHeight * 0.3) {
         setActive('home')
+        return
+      }
+      const scrollBottom = window.scrollY + window.innerHeight
+      const docHeight = document.documentElement.scrollHeight
+      if (docHeight - scrollBottom < window.innerHeight * 0.25) {
+        setActive(SECTIONS[SECTIONS.length - 1].id)
       }
     }
 
