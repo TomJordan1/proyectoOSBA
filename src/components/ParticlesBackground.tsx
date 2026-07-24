@@ -196,8 +196,8 @@ export default function ParticlesBackground() {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
-      <div ref={secondaryGlowRef} className="absolute left-0 top-0 h-[42rem] w-[42rem] rounded-full bg-blue-600/[0.04] blur-[130px] will-change-transform motion-reduce:left-1/2 motion-reduce:top-1/2 dark:bg-blue-600/[0.07]" />
-      <div ref={primaryGlowRef} className="absolute left-0 top-0 h-[28rem] w-[28rem] rounded-full bg-cyan-500/[0.06] blur-[95px] will-change-transform motion-reduce:left-1/2 motion-reduce:top-1/2 dark:bg-cyan-400/[0.10]" />
+      <div ref={secondaryGlowRef} className="absolute left-0 top-0 h-[48rem] w-[48rem] rounded-full bg-[radial-gradient(circle,rgba(37,99,235,0.05),transparent_70%)] will-change-transform motion-reduce:left-1/2 motion-reduce:top-1/2 dark:bg-[radial-gradient(circle,rgba(37,99,235,0.09),transparent_70%)]" />
+      <div ref={primaryGlowRef} className="absolute left-0 top-0 h-[32rem] w-[32rem] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.08),transparent_70%)] will-change-transform motion-reduce:left-1/2 motion-reduce:top-1/2 dark:bg-[radial-gradient(circle,rgba(34,211,238,0.13),transparent_70%)]" />
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
     </div>
   )

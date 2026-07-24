@@ -42,7 +42,7 @@ export default function ScrollDrivenNavigation() {
   return (
     <>
       <motion.div
-        className="pointer-events-none fixed left-0 top-0 z-[1] hidden h-72 w-72 rounded-full bg-cyan-400/[0.055] blur-[110px] md:block"
+        className="pointer-events-none fixed left-0 top-0 z-[1] hidden h-[26rem] w-[26rem] rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.07),transparent_70%)] md:block"
         style={{ x: glowX, y: glowY, scale: glowScale }}
         aria-hidden="true"
       />

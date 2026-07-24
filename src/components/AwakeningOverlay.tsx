@@ -103,7 +103,7 @@ export default function AwakeningOverlay({
         onAnimationComplete={completeJourney}
       >
         <motion.div
-          className="absolute inset-2 rounded-full bg-cyan-400/20 blur-[65px]"
+          className="absolute -inset-10 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.32),transparent_70%)]"
           animate={awake ? { opacity: 0.85, scale: 1.35 } : { opacity: 0.22, scale: 0.82 }}
           transition={{ duration: 0.7 }}
         />

@@ -26,7 +26,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
   return (
     <main className="relative z-10 min-h-screen overflow-hidden bg-[#f4f7fb] px-5 py-8 text-slate-800 dark:bg-[#05070c] dark:text-slate-100">
-      <div className="absolute left-1/2 top-1/2 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/[0.06] blur-[120px] dark:bg-cyan-500/10" />
+      <div className="absolute left-1/2 top-1/2 h-[40rem] w-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.1),transparent_70%)] dark:bg-[radial-gradient(circle,rgba(6,182,212,0.16),transparent_70%)]" />
       <div className="relative z-10 flex items-center justify-between">
         <a href="#home" className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/60 px-4 py-2 text-xs font-semibold text-slate-600 backdrop-blur transition hover:border-cyan-500/30 hover:text-slate-900 dark:border-white/10 dark:bg-slate-950/60 dark:text-slate-300 dark:hover:border-cyan-300/30 dark:hover:text-white">
           <ArrowLeft className="h-4 w-4" /> Volver al sitio

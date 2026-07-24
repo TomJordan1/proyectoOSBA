@@ -56,7 +56,7 @@ function InlineKanny({ from }: { from: 'left' | 'right' }) {
       transition={{ duration: 1.05, ease: MODERN_EASE }}
       aria-hidden="true"
     >
-      <div className="absolute h-48 w-48 rounded-full bg-cyan-500/10 blur-3xl dark:bg-cyan-400/15" />
+      <div className="absolute h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.16),transparent_70%)] dark:bg-[radial-gradient(circle,rgba(34,211,238,0.22),transparent_70%)]" />
       <div className="relative flex h-52 w-52 items-center justify-center">
         <KannyOrb state="normal" />
       </div>
@@ -72,7 +72,7 @@ export default function KandaceExperience({ heroReady }: KandaceExperienceProps)
   return (
     <>
       <section id="home" className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 pb-12 pt-24 text-center">
-        <div className="absolute left-1/2 top-1/2 -z-10 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/[0.07] blur-[110px] dark:bg-cyan-500/10" />
+        <div className="absolute left-1/2 top-1/2 -z-10 h-[40rem] w-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.11),transparent_70%)] dark:bg-[radial-gradient(circle,rgba(6,182,212,0.16),transparent_70%)]" />
         <div className="mx-auto flex min-h-[calc(100vh-6rem)] max-w-4xl flex-col items-center justify-center">
           <motion.div
             className="relative"
@@ -119,7 +119,7 @@ export default function KandaceExperience({ heroReady }: KandaceExperienceProps)
               animate={{ opacity: heroReady ? 1 : 0 }}
               transition={{ duration: 0.08 }}
             >
-              <div className="absolute inset-7 rounded-full bg-cyan-500/15 blur-[60px] dark:bg-cyan-400/20" />
+              <div className="absolute -inset-6 rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.22),transparent_70%)] dark:bg-[radial-gradient(circle,rgba(34,211,238,0.28),transparent_70%)]" />
               <KannyOrb state="afk" />
             </motion.div>
           </div>
@@ -235,7 +235,7 @@ export default function KandaceExperience({ heroReady }: KandaceExperienceProps)
 
       <section id="promise" className="px-6 py-20 md:py-24">
         <motion.div {...reveal} className="relative mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] border border-cyan-500/15 bg-gradient-to-br from-cyan-500/[0.06] via-white/80 to-blue-500/[0.05] p-8 shadow-[0_30px_100px_rgba(6,182,212,0.06)] md:p-14 dark:border-cyan-300/15 dark:from-cyan-400/[0.09] dark:via-slate-900/80 dark:to-blue-500/[0.08] dark:shadow-[0_30px_100px_rgba(6,182,212,0.1)]">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl dark:bg-cyan-400/10" />
+          <div className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.16),transparent_70%)] dark:bg-[radial-gradient(circle,rgba(34,211,238,0.16),transparent_70%)]" />
           <div className="relative grid items-center gap-8 md:grid-cols-[auto_1fr_auto]">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-700 dark:border-cyan-300/20 dark:bg-cyan-300/10 dark:text-cyan-200"><LockKeyhole className="h-8 w-8" /></div>
             <div><span className="text-xs font-bold uppercase tracking-[0.28em] text-cyan-600 dark:text-cyan-300">Our promise</span><h2 className="mt-3 text-3xl font-black text-slate-900 dark:text-white">Privacidad integrada desde el diseño.</h2><p className="mt-3 max-w-2xl leading-relaxed text-slate-600 dark:text-slate-400">Kandace limita la recolección de datos y prioriza el procesamiento local. No registra lo que escribes ni vende perfiles de productividad.</p></div>
