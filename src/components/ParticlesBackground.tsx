@@ -57,10 +57,11 @@ class Particle {
     if (this.y > height + 10) this.y = -10
   }
 
-  draw(context: CanvasRenderingContext2D) {
+  draw(context: CanvasRenderingContext2D, isDark: boolean) {
     context.beginPath()
     context.arc(this.x, this.y, this.size * this.depth, 0, Math.PI * 2)
-    context.fillStyle = `rgba(103, 232, 249, ${0.12 + this.depth * 0.42})`
+    const alpha = this.depth * (isDark ? 0.42 : 0.32) + (isDark ? 0.12 : 0.08)
+    context.fillStyle = isDark ? `rgba(103, 232, 249, ${alpha})` : `rgba(14, 116, 144, ${alpha})`
     context.fill()
   }
 }
@@ -87,6 +88,7 @@ export default function ParticlesBackground() {
     let height = window.innerHeight
     let particles: Particle[] = []
     let needsStaticDraw = true
+    let isDark = document.documentElement.classList.contains('dark')
 
     gsap.set([primaryGlow, secondaryGlow], { xPercent: -50, yPercent: -50 })
     gsap.set(primaryGlow, { x: pointer.x, y: pointer.y })
@@ -102,7 +104,7 @@ export default function ParticlesBackground() {
 
     const draw = () => {
       context.clearRect(0, 0, width, height)
-      for (const particle of particles) particle.draw(context)
+      for (const particle of particles) particle.draw(context, isDark)
     }
 
     const resize = () => {
@@ -133,7 +135,7 @@ export default function ParticlesBackground() {
       context.clearRect(0, 0, width, height)
       for (const particle of particles) {
         particle.update(pointer, width, height, delta)
-        particle.draw(context)
+        particle.draw(context, isDark)
       }
     }
 
@@ -163,6 +165,13 @@ export default function ParticlesBackground() {
       pointerActive(0)
     }
 
+    // El color de las partículas depende del tema activo (clase `dark` en <html>).
+    const themeObserver = new MutationObserver(() => {
+      isDark = document.documentElement.classList.contains('dark')
+      needsStaticDraw = true
+    })
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+
     resize()
     gsap.ticker.add(tick)
     window.addEventListener('resize', resize)
@@ -180,14 +189,15 @@ export default function ParticlesBackground() {
       document.removeEventListener('visibilitychange', onVisibilityChange)
       reducedMotionQuery.removeEventListener('change', onMotionPreference)
       coarsePointerQuery.removeEventListener('change', onPointerPreference)
+      themeObserver.disconnect()
       gsap.killTweensOf([pointer, primaryGlow, secondaryGlow])
     }
   }, [])
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
-      <div ref={secondaryGlowRef} className="absolute left-0 top-0 h-[42rem] w-[42rem] rounded-full bg-blue-600/[0.07] blur-[130px] will-change-transform motion-reduce:left-1/2 motion-reduce:top-1/2" />
-      <div ref={primaryGlowRef} className="absolute left-0 top-0 h-[28rem] w-[28rem] rounded-full bg-cyan-400/[0.10] blur-[95px] will-change-transform motion-reduce:left-1/2 motion-reduce:top-1/2" />
+      <div ref={secondaryGlowRef} className="absolute left-0 top-0 h-[42rem] w-[42rem] rounded-full bg-blue-600/[0.04] blur-[130px] will-change-transform motion-reduce:left-1/2 motion-reduce:top-1/2 dark:bg-blue-600/[0.07]" />
+      <div ref={primaryGlowRef} className="absolute left-0 top-0 h-[28rem] w-[28rem] rounded-full bg-cyan-500/[0.06] blur-[95px] will-change-transform motion-reduce:left-1/2 motion-reduce:top-1/2 dark:bg-cyan-400/[0.10]" />
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
     </div>
   )

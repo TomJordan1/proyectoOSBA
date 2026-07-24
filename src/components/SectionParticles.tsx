@@ -32,6 +32,7 @@ export default function SectionParticles({
     let height = 0
     let frame = 0
     let intersecting = false
+    let isDark = document.documentElement.classList.contains('dark')
 
     const createDots = () => {
       const amount = window.innerWidth < 768 ? Math.round(density * 0.65) : density
@@ -70,7 +71,7 @@ export default function SectionParticles({
         }
         context.beginPath()
         context.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2)
-        context.fillStyle = `rgba(103, 232, 249, ${dot.alpha})`
+        context.fillStyle = isDark ? `rgba(103, 232, 249, ${dot.alpha})` : `rgba(14, 116, 144, ${dot.alpha})`
         context.fill()
       }
     }
@@ -104,6 +105,11 @@ export default function SectionParticles({
     const resizeObserver = new ResizeObserver(resize)
     const onVisibilityChange = () => syncAnimation()
     const onMotionChange = () => syncAnimation()
+    const themeObserver = new MutationObserver(() => {
+      isDark = document.documentElement.classList.contains('dark')
+      draw(true)
+    })
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
 
     resize()
     intersectionObserver.observe(host)
@@ -117,6 +123,7 @@ export default function SectionParticles({
       resizeObserver.disconnect()
       document.removeEventListener('visibilitychange', onVisibilityChange)
       reducedMotion.removeEventListener('change', onMotionChange)
+      themeObserver.disconnect()
     }
   }, [density])
 

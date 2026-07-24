@@ -4,22 +4,41 @@
 
 @layer base {
   html { scroll-behavior: smooth; scroll-padding-top: 76px; }
-  body { @apply text-slate-100 font-sans overflow-x-hidden; min-width: 320px; background: #0b1120; -webkit-font-smoothing: antialiased; }
+  body {
+    @apply font-sans overflow-x-hidden text-slate-700 dark:text-slate-100;
+    min-width: 320px;
+    background: #f4f7fb;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 300ms ease, color 300ms ease;
+  }
+  html.dark body { background: #0b1120; }
   button, a { -webkit-tap-highlight-color: transparent; }
   ::selection { background-color: #22d3ee; color: #0b1120; }
 }
 
 @layer components {
-  .glass-panel { background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
-  .glass-nav { background: rgba(11, 17, 32, 0.74); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
-  .lindy-gradient-text { background: linear-gradient(135deg, #fff 0%, #cbd5e1 42%, #22d3ee 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(15, 23, 42, 0.08); }
+  .dark .glass-panel { background: rgba(15, 23, 42, 0.65); border-color: rgba(255, 255, 255, 0.08); }
+  .glass-nav { background: rgba(255, 255, 255, 0.78); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(15, 23, 42, 0.06); }
+  .dark .glass-nav { background: rgba(11, 17, 32, 0.74); border-bottom-color: rgba(255, 255, 255, 0.06); }
+  .lindy-gradient-text { background: linear-gradient(135deg, #0f172a 0%, #0369a1 42%, #0891b2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .dark .lindy-gradient-text { background: linear-gradient(135deg, #fff 0%, #cbd5e1 42%, #22d3ee 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
   .glow-button { box-shadow: 0 0 25px rgba(6, 182, 212, 0.35); }
   .glow-button:hover { box-shadow: 0 0 42px rgba(6, 182, 212, 0.55); }
-  /* Fondo negro con desvanecido en los bordes superior e inferior para que la
-     transición con las secciones vecinas (fondo #0b1120) sea gradual y no un
-     corte abrupto de color. */
+  /* Fondo con desvanecido en los bordes superior e inferior para que la
+     transición con las secciones vecinas sea gradual y no un corte
+     abrupto de color. El color base cambia según el tema. */
   .section-black {
     position: relative;
+    background: linear-gradient(
+      to bottom,
+      transparent 0,
+      #eef2f8 clamp(48px, 8vw, 120px),
+      #eef2f8 calc(100% - clamp(48px, 8vw, 120px)),
+      transparent 100%
+    );
+  }
+  .dark .section-black {
     background: linear-gradient(
       to bottom,
       transparent 0,

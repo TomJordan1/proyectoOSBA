@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="dark scroll-smooth">
+<html lang="es" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,6 +8,20 @@
       content="Kanny analiza la entropía de tu tecleo en tiempo real, detecta la sobrecarga cognitiva y despliega micro-pausas que previenen el burnout. 100% On-Device."
     />
     <title>Kanny - Tu Agente de Inteligencia Cognitiva y Flujo</title>
+    <script>
+      // Aplica el tema guardado (o la preferencia del sistema) antes del
+      // primer paint para evitar un parpadeo entre claro y oscuro.
+      ;(function () {
+        try {
+          var stored = window.localStorage.getItem('kandace-theme')
+          var isDark = stored ? stored === 'dark' : !window.matchMedia('(prefers-color-scheme: light)').matches
+          document.documentElement.classList.toggle('dark', isDark)
+          document.documentElement.style.colorScheme = isDark ? 'dark' : 'light'
+        } catch (error) {
+          document.documentElement.classList.add('dark')
+        }
+      })()
+    </script>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
