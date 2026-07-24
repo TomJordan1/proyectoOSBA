@@ -36,7 +36,7 @@
      como una línea nítida (efecto Mach band). El color base cambia según el tema. */
   .section-black {
     position: relative;
-    --fade: clamp(64px, 10vw, 160px);
+    --fade: clamp(80px, 18vw, 320px);
     background: linear-gradient(
       to bottom,
       rgba(238, 242, 248, 0) 0,
