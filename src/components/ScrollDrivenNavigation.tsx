@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 
 const SECTIONS = [
-  { id: 'home', label: 'Inicio' },
+  { id: 'home', label: 'Home' },
   { id: 'methodology', label: 'Methodology' },
   { id: 'pricing', label: 'Pricing' },
   { id: 'faq', label: 'FAQ' },
@@ -32,11 +32,26 @@ export default function ScrollDrivenNavigation() {
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
         if (visible?.target.id) setActive(visible.target.id)
       },
-      { rootMargin: '-30% 0px -55% 0px', threshold: [0, 0.15, 0.35] },
+      { rootMargin: '-15% 0px -35% 0px', threshold: [0, 0.1, 0.25, 0.5] },
     )
 
+    // Cuando el scroll está casi arriba del todo, el hero es la sección activa
+    // aunque el observer no lo reporte (la zona de observación puede quedar
+    // por debajo de lo visible cuando el hero está centrado verticalmente).
+    const onScroll = () => {
+      if (window.scrollY < window.innerHeight * 0.3) {
+        setActive('home')
+      }
+    }
+
     elements.forEach((element) => observer.observe(element))
-    return () => observer.disconnect()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('scroll', onScroll)
+    }
   }, [])
 
   return (
