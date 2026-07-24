@@ -17,7 +17,6 @@ import {
   Users,
 } from 'lucide-react'
 import KannyOrb from './KannyOrb'
-import SectionParticles from './SectionParticles'
 
 const STATES = [
   { name: 'AFK', detail: 'Detecta inactividad sin interrumpirte.', icon: EyeOff, tone: 'text-slate-600 dark:text-slate-300' },
@@ -45,7 +44,7 @@ const reveal = {
 function InlineKanny({ from }: { from: 'left' | 'right' }) {
   return (
     <motion.div
-      className="relative flex min-h-[15rem] items-center justify-center"
+      className="relative hidden min-h-[15rem] items-center justify-center md:flex"
       initial={{
         opacity: 0,
         x: from === 'right' ? 150 : -150,
@@ -71,7 +70,7 @@ interface KandaceExperienceProps {
 export default function KandaceExperience({ heroReady }: KandaceExperienceProps) {
   return (
     <>
-      <section id="home" className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 pb-12 pt-24 text-center">
+      <section id="home" className="relative flex min-h-screen items-center justify-center overflow-clip px-6 pb-12 pt-24 text-center">
         <div className="absolute left-1/2 top-1/2 -z-10 h-[40rem] w-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.11),transparent_70%)] dark:bg-[radial-gradient(circle,rgba(6,182,212,0.16),transparent_70%)]" />
         <div className="mx-auto flex min-h-[calc(100vh-6rem)] max-w-4xl flex-col items-center justify-center">
           <motion.div
@@ -155,9 +154,7 @@ export default function KandaceExperience({ heroReady }: KandaceExperienceProps)
         </div>
       </section>
 
-      <section id="methodology" data-scroll-section className="section-black relative isolate overflow-hidden px-6 py-20 text-slate-800 md:py-24 dark:text-inherit">
-        <SectionParticles density={58} />
-        <div data-scroll-layer data-speed="0.14" className="absolute inset-0 z-[1] bg-[radial-gradient(circle_at_70%_35%,rgba(6,182,212,0.10),transparent_36%)]" />
+      <section id="methodology" data-scroll-section className="relative px-6 pb-20 pt-24 text-slate-800 md:pb-24 md:pt-32 dark:text-inherit">
         <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[0.85fr_1.15fr]">
           <motion.div {...reveal}>
             <span className="text-xs font-bold uppercase tracking-[0.28em] text-cyan-600 dark:text-cyan-300">Methodology</span>
@@ -202,7 +199,7 @@ export default function KandaceExperience({ heroReady }: KandaceExperienceProps)
         </div>
       </section>
 
-      <section id="perspectives" className="px-6 py-20 md:py-24" aria-labelledby="solutions-title">
+      <section id="perspectives" className="relative px-6 py-20 md:py-24" aria-labelledby="solutions-title">
         <div className="mx-auto max-w-6xl">
           <motion.div {...reveal} className="mb-10 text-center">
             <span className="text-xs font-bold uppercase tracking-[0.28em] text-cyan-600 dark:text-cyan-300">Una experiencia, dos perspectivas</span>

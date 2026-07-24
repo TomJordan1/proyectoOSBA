@@ -62,6 +62,7 @@ export default function SectionParticles({
 
     const draw = (staticFrame = false) => {
       context.clearRect(0, 0, width, height)
+      const fadeZone = Math.min(height * 0.18, 120)
       for (const dot of dots) {
         if (!staticFrame) {
           dot.x += dot.vx
@@ -69,9 +70,15 @@ export default function SectionParticles({
           if (dot.x < 0 || dot.x > width) dot.vx *= -1
           if (dot.y < 0 || dot.y > height) dot.vy *= -1
         }
+        // Fade particles near top/bottom edges so they blend seamlessly
+        let edgeFade = 1
+        if (dot.y < fadeZone) edgeFade = dot.y / fadeZone
+        else if (dot.y > height - fadeZone) edgeFade = (height - dot.y) / fadeZone
+        const alpha = dot.alpha * edgeFade
+        if (alpha < 0.01) continue
         context.beginPath()
         context.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2)
-        context.fillStyle = isDark ? `rgba(103, 232, 249, ${dot.alpha})` : `rgba(14, 116, 144, ${dot.alpha})`
+        context.fillStyle = isDark ? `rgba(103, 232, 249, ${alpha})` : `rgba(14, 116, 144, ${alpha})`
         context.fill()
       }
     }
