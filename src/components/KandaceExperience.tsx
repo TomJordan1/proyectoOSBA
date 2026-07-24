@@ -17,6 +17,7 @@ import {
   Users,
 } from 'lucide-react'
 import KannyOrb from './KannyOrb'
+import type { KannyStateName } from '../lib/kannyEngine'
 
 const STATES = [
   { name: 'AFK', detail: 'Detecta inactividad sin interrumpirte.', icon: EyeOff, tone: 'text-slate-600 dark:text-slate-300' },
@@ -41,7 +42,7 @@ const reveal = {
   transition: { duration: 0.95, ease: MODERN_EASE },
 }
 
-function InlineKanny({ from }: { from: 'left' | 'right' }) {
+function InlineKanny({ from, state = 'normal' }: { from: 'left' | 'right'; state?: KannyStateName }) {
   return (
     <motion.div
       className="relative hidden min-h-[15rem] items-center justify-center md:flex"
@@ -57,7 +58,7 @@ function InlineKanny({ from }: { from: 'left' | 'right' }) {
     >
       <div className="absolute h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.16),transparent_70%)] dark:bg-[radial-gradient(circle,rgba(34,211,238,0.22),transparent_70%)]" />
       <div className="relative flex h-52 w-52 items-center justify-center">
-        <KannyOrb state="normal" />
+        <KannyOrb state={state} />
       </div>
     </motion.div>
   )
@@ -214,7 +215,7 @@ export default function KandaceExperience({ heroReady }: KandaceExperienceProps)
                 <h3 className="mt-3 text-3xl font-bold text-slate-900 dark:text-white">Recupera tu atención.</h3>
                 <p className="mt-4 leading-relaxed text-slate-600 dark:text-slate-400">Kanny reduce la carga mental, detecta sesiones erráticas y te ayuda a gestionar pausas sin romper tu concentración.</p>
               </motion.article>
-              <InlineKanny from="right" />
+              <InlineKanny from="right" state="erratic" />
             </div>
 
             <div className="grid items-stretch gap-6 md:grid-cols-2">
