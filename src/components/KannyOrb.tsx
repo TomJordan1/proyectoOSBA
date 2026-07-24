@@ -21,8 +21,8 @@ function KannyOrb({ sleeping = false, state = 'normal', className = '' }: KannyO
   useKannyEngine(canvasRef, { state, sleeping })
 
   return (
-    <div className={`kanny-orb ${className}`} aria-hidden="true" style={{ background: 'radial-gradient(circle, #0b1120 60%, transparent 100%)' }}>
-      <canvas ref={canvasRef} />
+    <div className={`kanny-orb ${className}`} aria-hidden="true">
+      <canvas ref={canvasRef} style={{ filter: 'drop-shadow(0 0 24px rgba(6, 182, 212, 0.45))' }} />
     </div>
   )
 }
