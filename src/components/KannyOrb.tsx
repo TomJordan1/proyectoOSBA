@@ -22,7 +22,7 @@ function KannyOrb({ sleeping = false, state = 'normal', className = '' }: KannyO
 
   return (
     <div className={`kanny-orb ${className}`} aria-hidden="true">
-      <canvas ref={canvasRef} style={{ filter: 'drop-shadow(0 0 24px rgba(6, 182, 212, 0.45))' }} />
+      <canvas ref={canvasRef} style={{ filter: 'drop-shadow(0 0 40px rgba(0, 0, 0, 0.6))' }} />
     </div>
   )
 }
