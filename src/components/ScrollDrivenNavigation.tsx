@@ -113,21 +113,21 @@ export default function ScrollDrivenNavigation() {
               aria-label={`Ir a ${section.label}`}
             >
               <motion.span
-                className="text-[9px] font-bold uppercase tracking-[0.18em] text-cyan-200"
+                className="text-[9px] font-bold uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-200"
                 animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : 8 }}
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               >
                 {section.label}
               </motion.span>
               <motion.span
-                className="block rounded-full border border-cyan-200/30 bg-slate-950/80"
+                className="block rounded-full border border-cyan-600/40 bg-white/80 dark:border-cyan-200/30 dark:bg-slate-950/80"
                 animate={{
                   width: isActive ? 20 : 8,
                   height: 8,
-                  backgroundColor: isActive ? '#22d3ee' : 'rgba(15,23,42,.8)',
+                  backgroundColor: isActive ? '#22d3ee' : undefined,
                   boxShadow: isActive ? '0 0 16px rgba(34,211,238,.8)' : '0 0 0 rgba(0,0,0,0)',
                 }}
-                whileHover={{ scale: 1.25, borderColor: 'rgba(103,232,249,.8)' }}
+                whileHover={{ scale: 1.25, borderColor: 'rgba(6,182,212,.8)' }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               />
             </a>
