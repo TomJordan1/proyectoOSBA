@@ -8,8 +8,8 @@ const PLANS = [
 
 export default function Pricing() {
   return (
-    <section id="pricing" data-scroll-section className="relative overflow-hidden px-6 py-20 md:py-24">
-      <div data-scroll-layer data-speed="0.18" className="absolute left-1/2 top-1/2 -z-10 h-[36rem] w-[60rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(59,130,246,0.09),transparent_70%)] dark:bg-[radial-gradient(ellipse,rgba(59,130,246,0.13),transparent_70%)]" />
+    <section id="pricing" data-scroll-section className="relative px-6 pb-20 pt-24 md:pb-24 md:pt-32">
+      <div data-scroll-layer data-speed="0.18" className="absolute left-1/2 top-1/2 z-[1] h-[36rem] w-[60rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(59,130,246,0.09),transparent_70%)] dark:bg-[radial-gradient(ellipse,rgba(59,130,246,0.13),transparent_70%)]" />
       <div data-scroll-reveal className="mx-auto mb-10 max-w-3xl text-center">
         <span className="text-xs font-bold uppercase tracking-[0.28em] text-cyan-600 dark:text-cyan-300">Pricing</span>
         <h2 className="mt-4 text-4xl font-black tracking-tight text-slate-900 md:text-5xl dark:text-white">Empieza con calma. Crece a tu ritmo.</h2>

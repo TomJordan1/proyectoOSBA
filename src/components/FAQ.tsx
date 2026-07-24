@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, MessageCircleQuestion } from 'lucide-react'
-import SectionParticles from './SectionParticles'
 
 const MODERN_EASE = [0.16, 1, 0.3, 1] as const
 const FAQS = [
@@ -15,9 +14,7 @@ export default function FAQ() {
   const [open, setOpen] = useState<number | null>(0)
 
   return (
-    <section id="faq" data-scroll-section className="section-black relative isolate overflow-hidden px-6 py-20 md:py-24">
-      <SectionParticles density={52} />
-      <div data-scroll-layer data-speed="-0.12" className="absolute inset-0 z-[1] bg-[radial-gradient(circle_at_20%_45%,rgba(14,165,233,0.10),transparent_34%)]" />
+    <section id="faq" data-scroll-section className="relative px-6 pb-20 pt-24 md:pb-24 md:pt-32">
       <div className="relative z-10 mx-auto grid max-w-6xl gap-12 lg:grid-cols-[0.72fr_1.28fr]">
         <div data-scroll-reveal data-axis="x" data-direction="-1">
           <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-700 dark:border-cyan-300/20 dark:bg-cyan-300/10 dark:text-cyan-200"><MessageCircleQuestion className="h-6 w-6" /></div>
