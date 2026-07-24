@@ -179,7 +179,7 @@ export default function KandaceExperience({ heroReady }: KandaceExperienceProps)
 
           <motion.div {...reveal} transition={{ duration: 0.7, delay: 0.1 }} className="interactive-card overflow-hidden rounded-[2rem] border border-black/10 bg-white/90 shadow-[0_30px_100px_rgba(2,132,199,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/80 dark:shadow-[0_30px_100px_rgba(2,132,199,0.16)]" tabIndex={0}>
             <div className="flex items-center justify-between border-b border-black/10 bg-black/[0.02] px-5 py-3 dark:border-white/10 dark:bg-white/[0.03]">
-              <span className="font-mono text-[11px] text-slate-500">Kanny State Simulator.exe</span>
+              <span className="font-mono text-[11px] text-slate-500">Kanny State Simulator</span>
               <div className="flex items-center">
                 <span className="flex h-7 w-10 items-center justify-center text-slate-500 hover:bg-white/10" aria-hidden="true"><svg width="10" height="1" viewBox="0 0 10 1"><rect width="10" height="1" fill="currentColor"/></svg></span>
                 <span className="flex h-7 w-10 items-center justify-center text-slate-500 hover:bg-white/10" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="0.5" y="0.5" width="9" height="9" stroke="currentColor" strokeWidth="1"/></svg></span>
