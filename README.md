@@ -1,8 +1,8 @@
-# LAMINAR
+# KANDACE
 
 **Agente especializado, local-first y privado, que ayuda a desarrolladores y trabajadores a recuperar el foco — sin vigilarlos.**
 
-Laminar detecta *localmente* señales abstractas de fricción digital (correcciones frecuentes, cambios de ventana, movimiento inestable del cursor) y, cuando la fricción es sostenida y el contexto lo permite, ofrece un micro-respiro opcional (pausa activa / burbujas). Un LLM actúa como **motor de decisión** para elegir la acción adecuada entre varias herramientas seguras. La empresa financia una herramienta de **autocuidado** y solo recibe **tendencias grupales**, nunca datos individuales.
+Kandace detecta *localmente* señales abstractas de fricción digital (correcciones frecuentes, cambios de ventana, movimiento inestable del cursor) y, cuando la fricción es sostenida y el contexto lo permite, ofrece un micro-respiro opcional (pausa activa / burbujas). Un LLM actúa como **motor de decisión** para elegir la acción adecuada entre varias herramientas seguras. La empresa financia una herramienta de **autocuidado** y solo recibe **tendencias grupales**, nunca datos individuales.
 
 > Reto: **Agentes especializados**. Modelo de producto: **B2B2E** (Business-to-Business-to-Employee).
 
@@ -10,9 +10,9 @@ Laminar detecta *localmente* señales abstractas de fricción digital (correccio
 
 | Componente | Qué es | Tecnología |
 |---|---|---|
-| **Laminar Personal** | Agente de escritorio del trabajador: sensores, detección, intervención, todo local. Corre en segundo plano con una mascota y un icono de bandeja. | .NET 8 · C# · WPF |
-| **Laminar Cloud** | Backend serverless: motor de decisión (LLM) + agregación con privacidad. | AWS API Gateway · Lambda (TypeScript) · Bedrock · DynamoDB |
-| **Laminar Teams** | Dashboard colectivo para RR. HH.: tendencias grupales, sin personas ni rankings. | React · TypeScript · Amplify (demo en HTML) |
+| **Kandace Personal** | Agente de escritorio del trabajador: sensores, detección, intervención, todo local. Corre en segundo plano con una mascota y un icono de bandeja. | .NET 8 · C# · WPF |
+| **Kandace Cloud** | Backend serverless: motor de decisión (LLM) + agregación con privacidad. | AWS API Gateway · Lambda (TypeScript) · Bedrock · DynamoDB |
+| **Kandace Teams** | Dashboard colectivo para RR. HH.: tendencias grupales, sin personas ni rankings. | React · TypeScript · Amplify (demo en HTML) |
 
 **Dos canales separados que no se mezclan:** decisiones (`/v1/decisions`, `/v1/feedback`) y agregación (`/v1/team-metrics`, `/v1/teams/{teamId}/summary`). El canal de agregación **nunca** lleva identidad humana (`installation_token` rotativo; prohibido `user_id`, nombre o correo). Los grupos con menos de 5 contribuyentes se **suprimen**.
 
@@ -38,8 +38,8 @@ Hoy el "cerebro" usa un proveedor **mock determinista** y los sensores están **
 .
 ├── README.md · LICENSE · SECURITY.md · CONTRIBUTING.md
 ├── backend/            Orquestador TypeScript (Lambda): decisiones + agregación + FinOps + pruebas
-├── desktop-agent/      Agente .NET 8 / WPF (Laminar Personal)
-├── dashboard/          Laminar Teams (demo HTML + datos de ejemplo)
+├── desktop-agent/      Agente .NET 8 / WPF (Kandace Personal)
+├── dashboard/          Kandace Teams (demo HTML + datos de ejemplo)
 ├── infrastructure/     AWS SAM (plantilla, sin desplegar)
 ├── contracts/          JSON Schema de los contratos + fixtures de escenarios
 ├── tests/              Notas de pruebas
@@ -66,7 +66,7 @@ npm run demo:b2b2e  # muestra los dos canales (A–F) sin AWS
 ```bash
 cd desktop-agent
 dotnet build
-dotnet run --project src/Laminar.App   # agente en segundo plano (mascota + bandeja)
+dotnet run --project src/Kandace.App   # agente en segundo plano (mascota + bandeja)
 ```
 
 **Dashboard Teams (demo, sin build):**

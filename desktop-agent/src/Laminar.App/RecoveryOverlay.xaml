@@ -85,7 +85,7 @@
             </Border>
         </Grid>
 
-        <TextBlock Text="Laminar · pausa activa" Foreground="#6BB4C2C8" FontSize="11"
+        <TextBlock Text="Kandace · pausa activa" Foreground="#6BB4C2C8" FontSize="11"
                    HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,18,14"/>
     </Grid>
 </Window>
