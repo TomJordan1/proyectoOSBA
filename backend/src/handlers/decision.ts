@@ -19,7 +19,10 @@ export async function handler(event: ProxyEvent): Promise<ProxyResult> {
   }
 
   const req = parsed as DecisionRequest;
-  const decision = await engine.decide(req);
+  // Código de prueba por header (no forma parte del contrato JSON). Case-insensitive.
+  const h = event.headers ?? {};
+  const trialCode = h["x-trial-code"] ?? h["X-Trial-Code"] ?? h["X-TRIAL-CODE"];
+  const decision = await engine.decide(req, trialCode ?? undefined);
   const latencyMs = Date.now() - started;
   // Log content-blind: nunca el payload.
   console.log(JSON.stringify({ evt: "decision", action: decision.action, reason_code: decision.reason_code, decision_source: decision.decision_source, fallback: decision.fallback, latencyMs }));

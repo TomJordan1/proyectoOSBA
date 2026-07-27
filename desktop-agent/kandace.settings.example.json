@@ -1,0 +1,6 @@
+{
+  "apiBaseUrl": "https://80mu8trlrl.execute-api.us-east-1.amazonaws.com/v1",
+  "apiKey": "PON_AQUI_TU_API_KEY",
+  "sensors": "real",
+  "ui": "v1"
+}

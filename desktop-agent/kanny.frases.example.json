@@ -1,0 +1,35 @@
+{
+  "_comment": "Copia este archivo como 'kanny.frases.json' junto al .exe para personalizar las frases de Kanny SIN recompilar. Todas las claves son opcionales: las que falten usan los valores por defecto del programa.",
+  "intro": [
+    "Hey… llevas un buen rato frente a la pantalla.",
+    "No tienes que parar todo. Solo regálame unos segundos.",
+    "Vamos juntos, afloja un poquito los hombros."
+  ],
+  "Inhala": [
+    "Toma aire conmigo… despacio, sin esfuerzo.",
+    "Deja que el pecho se abra suavemente.",
+    "Aire nuevo, tranquilo… entra a tu ritmo."
+  ],
+  "Mantén": [
+    "Quédate aquí un instante. No hay prisa.",
+    "Solo siente la pausa… yo cuento contigo."
+  ],
+  "Exhala": [
+    "Ahora suelta el aire… y deja caer la tensión.",
+    "Exhala lento. Imagina que el cansancio se aleja."
+  ],
+  "click": [
+    "¡Te sentí! ¿Cómo va esa pausa?",
+    "Aquí estoy. ¿Otra respiración conmigo?"
+  ],
+  "closing": [
+    "Lo hiciste muy bien. Vuelve cuando te sientas listo.",
+    "Gracias por este ratito. Nos vemos en la próxima pausa ✦"
+  ],
+  "tips": [
+    "Estira las manos y las muñecas unos segundos.",
+    "Relaja los hombros y respira hondo tres veces.",
+    "Mira algo lejano ~20 segundos para descansar la vista.",
+    "Ponte de pie y estira la espalda."
+  ]
+}

@@ -11,11 +11,23 @@ export async function handler(event: ProxyEvent): Promise<ProxyResult> {
   } catch {
     return json(400, { error: "INVALID_JSON" });
   }
-  if (!validateTeamMetrics(parsed)) {
-    return json(400, { error: "SCHEMA_VALIDATION" });
+  // Acepta un paquete o un lote (array) de paquetes.
+  const packets = Array.isArray(parsed) ? parsed : [parsed];
+  if (packets.length === 0) {
+    return json(400, { error: "EMPTY_BATCH" });
   }
-  aggregator.ingest(parsed as TeamMetricsPacket);
+  for (const p of packets) {
+    if (!validateTeamMetrics(p)) {
+      return json(400, { error: "SCHEMA_VALIDATION" });
+    }
+  }
+  try {
+    await aggregator.ingestMany(packets as TeamMetricsPacket[]);
+  } catch (err) {
+    console.error(JSON.stringify({ evt: "team_metrics_error", message: (err as Error).message }));
+    return json(500, { error: "STORE_ERROR" });
+  }
   // Log content-blind: sin payload, sin identidad.
-  console.log(JSON.stringify({ evt: "team_metrics", accepted: true }));
-  return json(202, { accepted: true });
+  console.log(JSON.stringify({ evt: "team_metrics", accepted: true, count: packets.length }));
+  return json(202, { accepted: true, count: packets.length });
 }

@@ -23,7 +23,7 @@ export const REASON_CODES = [
 ] as const;
 export type ReasonCode = (typeof REASON_CODES)[number];
 
-export type DecisionSource = "bedrock" | "cache" | "local_policy" | "mock";
+export type DecisionSource = "bedrock" | "anthropic" | "deepseek" | "cache" | "local_policy" | "mock";
 
 export interface Friction {
   score: number;

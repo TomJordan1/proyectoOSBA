@@ -1,53 +1,36 @@
 import type { PrivacyOptions } from "../privacy/group-privacy.js";
 import { DEFAULT_PRIVACY, resolvePrivacyStatus } from "../privacy/group-privacy.js";
-import type {
-  Recommendation, TeamMetricsPacket, TeamSummary, Trend, Confidence,
-} from "../domain/team-types.js";
+import type { Recommendation, TeamMetricsPacket, TeamSummary, Trend, Confidence } from "../domain/team-types.js";
+import { InMemoryAggregateStore, type AggregateStore } from "./store.js";
 
 interface SummarizeOptions {
   periodStart: string;
   periodEnd: string;
   now?: Date;
-  applyDelay?: boolean;   // en demo: false
+  applyDelay?: boolean;
   privacy?: PrivacyOptions;
 }
 
 /**
- * Agregador en memoria (canal de agregación). Agrupa por organización/equipo y
- * ventana. Cuenta contribuyentes técnicos por installation_token, sin identidad
- * humana. Suprime grupos pequeños. Almacenamiento local para el MVP; DynamoDB posterior.
+ * Agrega métricas de equipo con privacidad. Persiste vía AggregateStore
+ * (en memoria para dev/tests, DynamoDB en producción). Nunca identidad humana.
  */
 export class Aggregator {
-  private store = new Map<string, TeamMetricsPacket[]>();
+  constructor(private readonly store: AggregateStore = new InMemoryAggregateStore()) {}
 
-  private key(org: string, team: string): string {
-    return `${org}::${team}`;
+  async ingest(packet: TeamMetricsPacket): Promise<void> {
+    await this.store.put(packet);
   }
 
-  ingest(packet: TeamMetricsPacket): void {
-    const k = this.key(packet.organization_id, packet.team_id);
-    const list = this.store.get(k) ?? [];
-    list.push(packet);
-    this.store.set(k, list);
+  async ingestMany(packets: TeamMetricsPacket[]): Promise<void> {
+    for (const p of packets) await this.store.put(p);
   }
 
-  ingestMany(packets: TeamMetricsPacket[]): void {
-    for (const p of packets) this.ingest(p);
-  }
-
-  private inPeriod(p: TeamMetricsPacket, start: number, end: number): boolean {
-    const t = Date.parse(p.window_start);
-    return t >= start && t <= end;
-  }
-
-  summarize(organizationId: string, teamId: string, opts: SummarizeOptions): TeamSummary {
+  async summarize(organizationId: string, teamId: string, opts: SummarizeOptions): Promise<TeamSummary> {
     const privacy = opts.privacy ?? DEFAULT_PRIVACY;
-    const start = Date.parse(opts.periodStart);
-    const end = Date.parse(opts.periodEnd);
-    const packets = (this.store.get(this.key(organizationId, teamId)) ?? [])
-      .filter((p) => this.inPeriod(p, start, end));
+    const packets = await this.store.query(organizationId, teamId, opts.periodStart, opts.periodEnd);
 
-    // Contribuyentes técnicos: distintos installation_token (o paquetes activos si no hay token).
+    // Contribuyentes técnicos: distintos installation_token (sin identidad humana).
     const tokens = new Set<string>();
     let activeWithoutToken = 0;
     for (const p of packets) {
@@ -58,9 +41,9 @@ export class Aggregator {
     }
     const contributorCount = tokens.size + activeWithoutToken;
 
-    // Retraso lógico del dashboard.
     const now = opts.now ?? new Date();
-    const isDelayed = opts.applyDelay === true && (now.getTime() - end) < privacy.dashboardDelayMinutes * 60_000;
+    const end = Date.parse(opts.periodEnd);
+    const isDelayed = opts.applyDelay === true && now.getTime() - end < privacy.dashboardDelayMinutes * 60_000;
 
     const privacyStatus = resolvePrivacyStatus(contributorCount, privacy, isDelayed);
     const confidence: Confidence =
@@ -77,7 +60,6 @@ export class Aggregator {
       confidence,
     };
 
-    // Con grupo insuficiente / retraso / no disponible: NO devolver métricas.
     if (privacyStatus !== "visible") return base;
 
     const avgFriction = mean(packets.map((p) => p.avg_friction));
@@ -99,7 +81,6 @@ function mean(xs: number[]): number { return xs.length ? sum(xs) / xs.length : 0
 function sum(xs: number[]): number { return xs.reduce((a, b) => a + b, 0); }
 function round(x: number): number { return Math.round(x * 100) / 100; }
 
-/** Tendencia comparando la primera y última ventana temporal del periodo. */
 function computeTrend(packets: TeamMetricsPacket[]): Trend {
   const byWindow = new Map<number, number[]>();
   for (const p of packets) {
@@ -118,20 +99,13 @@ function computeTrend(packets: TeamMetricsPacket[]): Trend {
   return "stable";
 }
 
-/** Recomendaciones de PROCESO (no de personas), transparentes y no clínicas. */
 function buildRecommendations(avgFriction: number, packets: TeamMetricsPacket[]): Recommendation[] {
   const anyHigh = packets.some((p) => p.friction_band === "high");
   if (avgFriction >= 0.7 || anyHigh) {
-    return [{
-      code: "REVIEW_MEETING_DENSITY",
-      message: "La fricción digital agregada está elevada; revisar la concentración de reuniones y validar con el equipo.",
-    }];
+    return [{ code: "REVIEW_MEETING_DENSITY", message: "La fricción digital agregada está elevada; revisar la concentración de reuniones y validar con el equipo." }];
   }
   if (avgFriction >= 0.55) {
-    return [{
-      code: "REVIEW_FOCUS_TIME",
-      message: "Fricción moderada; considerar bloques de foco sin interrupciones.",
-    }];
+    return [{ code: "REVIEW_FOCUS_TIME", message: "Fricción moderada; considerar bloques de foco sin interrupciones." }];
   }
   return [{ code: "NO_ACTION_NEEDED", message: "Patrón agregado estable respecto a la línea base." }];
 }

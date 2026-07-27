@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Laminar Teams</title>
+<style>
+  :root{
+    --bg:#f6f7fb; --card:#ffffff; --ink:#1f2740; --mut:#6b7488; --dim:#9aa2b4;
+    --line:#e7eaf3; --acc:#7c6cf0; --acc2:#33c9c1; --ok:#1f9d6b; --warn:#c98a1e;
+    --shadow:0 6px 24px rgba(31,39,64,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:14px/1.55 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:940px;margin:0 auto;padding:32px 24px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:6px}
+  h1{font-size:22px;margin:0;letter-spacing:-.01em}
+  .brand-dot{display:inline-block;width:10px;height:10px;border-radius:50%;
+    background:linear-gradient(135deg,var(--acc),var(--acc2));margin-right:8px;vertical-align:middle}
+  .sub{color:var(--mut);font-size:13px;margin:0 0 22px}
+  button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);
+    background:var(--card);color:var(--ink);padding:9px 14px;transition:.15s}
+  button:hover{border-color:var(--acc)}
+  .btn-primary{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:none;
+    padding:11px 20px;font-weight:600;box-shadow:var(--shadow)}
+  .who{font-size:12px;color:var(--mut)}
+  .who b{color:var(--ink)}
+  .controls{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+  label.k{color:var(--mut);font-size:12px}
+  select{font:inherit;background:var(--card);color:var(--ink);border:1px solid var(--line);
+    border-radius:10px;padding:9px 12px}
+  .row{display:flex;gap:16px;flex-wrap:wrap}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;
+    flex:1;min-width:170px;box-shadow:var(--shadow)}
+  .k{color:var(--mut);font-size:12px}
+  .v{font-size:26px;font-weight:700;margin-top:6px;letter-spacing:-.02em}
+  .pill{display:inline-block;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600}
+  .pill.visible{background:#e6f6ee;color:var(--ok);border:1px solid #b8e6cf}
+  .pill.insufficient_group,.pill.unavailable{background:#fbf1de;color:var(--warn);border:1px solid #ecd6a6}
+  .pill.delayed{background:#eef0fe;color:var(--acc);border:1px solid #d4d6fb}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;
+    margin-top:16px;box-shadow:var(--shadow)}
+  .rec{border-left:3px solid var(--acc);padding:10px 14px;margin-top:12px;background:#fafaff;border-radius:0 10px 10px 0}
+  .rec .code{color:var(--dim);font-size:11px;letter-spacing:.05em;margin-bottom:2px}
+  .foot{color:var(--dim);font-size:12px;margin-top:26px;line-height:1.7}
+  .center{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
+  .muted{color:var(--mut)}
+  .err{background:#fdecec;border:1px solid #f3c4c4;color:#a23a3a;border-radius:12px;padding:14px 16px}
+  .hidden{display:none}
+  code{background:#eef0f6;padding:1px 6px;border-radius:6px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Vista de login -->
+  <div id="login" class="center hidden">
+    <h1><span class="brand-dot"></span>Laminar Teams</h1>
+    <p class="muted" style="max-width:420px">Panel de tendencias colectivas por equipo. Inicia sesión con tu cuenta de organización para ver las métricas agregadas (sin vistas individuales).</p>
+    <button class="btn-primary" onclick="login()">Iniciar sesión</button>
+  </div>
+
+  <!-- Vista de carga -->
+  <div id="loading" class="center">
+    <p class="muted">Cargando…</p>
+  </div>
+
+  <!-- Vista del panel -->
+  <div id="app" class="hidden">
+    <header>
+      <div>
+        <h1><span class="brand-dot"></span>Laminar Teams</h1>
+      </div>
+      <div style="text-align:right">
+        <div class="who" id="who"></div>
+        <button onclick="logout()" style="margin-top:6px;padding:6px 12px;font-size:12px">Cerrar sesión</button>
+      </div>
+    </header>
+    <p class="sub">Tendencias colectivas para mejorar procesos. Sin rankings, sin evaluación de personas.</p>
+
+    <div class="controls">
+      <label class="k" for="team">Equipo</label>
+      <select id="team">
+        <option value="backend">backend</option>
+        <option value="frontend">frontend</option>
+      </select>
+      <button onclick="refresh()" style="padding:9px 14px;font-size:13px">Actualizar</button>
+    </div>
+
+    <div id="content"></div>
+
+    <div class="foot">
+      Laminar muestra a la empresa lo mínimo necesario para mejorar el entorno de trabajo; el detalle pertenece al trabajador.
+      Confianza <b>exploratoria</b>: no es una medición científica ni un diagnóstico. Consume <code>GET /v1/teams/{teamId}/summary</code> con tu token de Cognito; el backend aísla por organización.
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ==== CONFIG (valores públicos del despliegue; no son secretos) ====
+const CONFIG = {
+  cognitoDomain: "https://laminar-766796015833.auth.us-east-1.amazoncognito.com",
+  clientId:      "4ojm2gfl880md39bkfhqoc4th8",
+  // URL de retorno = la propia página, sea localhost o el dominio publicado.
+  // Debe estar registrada en CallbackURLs del App Client de Cognito.
+  redirectUri:   (location.origin + location.pathname),
+  apiBaseUrl:    "https://80mu8trlrl.execute-api.us-east-1.amazonaws.com/v1",
+  scope:         "openid email profile"
+};
+
+// ==== PKCE helpers ====
+function b64url(bytes){ return btoa(String.fromCharCode.apply(null, bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function randStr(len){ const a=new Uint8Array(len); crypto.getRandomValues(a); return b64url(a); }
+async function sha256b64(str){ const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); return b64url(new Uint8Array(buf)); }
+function decodeJwt(t){ try{ return JSON.parse(decodeURIComponent(escape(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))))); }catch(e){ return {}; } }
+
+async function login(){
+  const verifier = randStr(64);
+  sessionStorage.setItem('pkce_verifier', verifier);
+  const challenge = await sha256b64(verifier);
+  const url = `${CONFIG.cognitoDomain}/oauth2/authorize?response_type=code`
+    + `&client_id=${encodeURIComponent(CONFIG.clientId)}`
+    + `&redirect_uri=${encodeURIComponent(CONFIG.redirectUri)}`
+    + `&scope=${encodeURIComponent(CONFIG.scope)}`
+    + `&code_challenge=${challenge}&code_challenge_method=S256`;
+  window.location = url;
+}
+
+function logout(){
+  sessionStorage.removeItem('id_token');
+  const url = `${CONFIG.cognitoDomain}/logout?client_id=${encodeURIComponent(CONFIG.clientId)}`
+    + `&logout_uri=${encodeURIComponent(CONFIG.redirectUri)}`;
+  window.location = url;
+}
+
+async function exchangeCode(code){
+  const verifier = sessionStorage.getItem('pkce_verifier');
+  const body = new URLSearchParams({
+    grant_type:'authorization_code', client_id:CONFIG.clientId,
+    code, redirect_uri:CONFIG.redirectUri, code_verifier:verifier || ''
+  });
+  const r = await fetch(`${CONFIG.cognitoDomain}/oauth2/token`, {
+    method:'POST', headers:{'content-type':'application/x-www-form-urlencoded'}, body
+  });
+  if(!r.ok) throw new Error('token_exchange_failed');
+  return await r.json();
+}
+
+function show(id){ ['login','loading','app'].forEach(x=>document.getElementById(x).classList.toggle('hidden', x!==id)); }
+
+function band(v){ if(v>=0.7)return'elevada'; if(v>=0.55)return'moderada'; return'baja'; }
+
+function render(s, err){
+  const el = document.getElementById('content');
+  if(err){ el.innerHTML = `<div class="err">No se pudo cargar el resumen: ${err}</div>`; return; }
+  if(!s){ el.innerHTML = '<div class="panel muted">Sin datos para este equipo en el periodo.</div>'; return; }
+  if(s.privacy_status !== 'visible'){
+    el.innerHTML = `<div class="panel">
+        <span class="pill ${s.privacy_status}">${String(s.privacy_status).replace('_',' ')}</span>
+        <p>El grupo es demasiado pequeño para mostrar métricas sin comprometer la privacidad
+        (contribuyentes: <b>${s.contributor_count}</b>, mínimo 5). No se muestran datos.</p>
+      </div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="row">
+      <div class="card"><div class="k">Estado de privacidad</div><div class="v"><span class="pill visible">visible</span></div></div>
+      <div class="card"><div class="k">Tamaño de muestra</div><div class="v">${s.contributor_count} <span class="k">contrib.</span></div></div>
+      <div class="card"><div class="k">Fricción agregada</div><div class="v">${band(s.avg_friction)}</div></div>
+      <div class="card"><div class="k">Feedback útil</div><div class="v">${Math.round((s.helpful_rate||0)*100)}%</div></div>
+    </div>
+    <div class="panel">
+      <div class="k">Tendencia — <b>${s.trend||'—'}</b> · confianza ${s.confidence||'—'} · periodo ${s.period_start?.slice(0,10)} → ${s.period_end?.slice(0,10)}</div>
+    </div>
+    <div class="panel">
+      <div class="k">Recomendaciones de proceso</div>
+      ${(s.recommendations||[]).map(r=>`<div class="rec"><div class="code">${r.code}</div>${r.message}</div>`).join('') || '<p class="muted">Sin recomendaciones.</p>'}
+    </div>`;
+}
+
+let ORG = null, EMAIL = null;
+
+async function refresh(){
+  const token = sessionStorage.getItem('id_token');
+  if(!token){ show('login'); return; }
+  const team = document.getElementById('team').value;
+  const end = new Date();
+  const start = new Date(end.getTime() - 7*24*3600*1000); // últimos 7 días
+  const qs = `organization_id=${encodeURIComponent(ORG)}`
+    + `&period_start=${encodeURIComponent(start.toISOString())}`
+    + `&period_end=${encodeURIComponent(end.toISOString())}`;
+  try{
+    const r = await fetch(`${CONFIG.apiBaseUrl}/teams/${encodeURIComponent(team)}/summary?${qs}`, {
+      headers:{ 'Authorization':`Bearer ${token}` }
+    });
+    if(r.status===401){ sessionStorage.removeItem('id_token'); show('login'); return; }
+    const data = await r.json();
+    render(data);
+  }catch(e){ render(null, e.message); }
+}
+
+async function boot(){
+  show('loading');
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  if(code){
+    try{
+      const t = await exchangeCode(code);
+      if(t.id_token) sessionStorage.setItem('id_token', t.id_token);
+    }catch(e){ /* cae a login */ }
+    // limpiar el ?code de la URL
+    window.history.replaceState({}, document.title, CONFIG.redirectUri);
+  }
+  const token = sessionStorage.getItem('id_token');
+  if(!token){ show('login'); return; }
+  const claims = decodeJwt(token);
+  ORG = claims['custom:organization_id'] || null;
+  EMAIL = claims['email'] || claims['cognito:username'] || '—';
+  if(!ORG){ render(null, 'Tu usuario no tiene organización asignada (custom:organization_id).'); }
+  document.getElementById('who').innerHTML = `<b>${EMAIL}</b><br/>org: ${ORG||'—'}`;
+  document.getElementById('team').addEventListener('change', refresh);
+  show('app');
+  refresh();
+}
+
+boot();
+</script>
+</body>
+</html>

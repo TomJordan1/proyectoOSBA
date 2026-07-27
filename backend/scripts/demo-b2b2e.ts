@@ -37,8 +37,8 @@ for (const [label, file, team] of [
 ] as const) {
   const packets = JSON.parse(readFileSync(resolve(fx, file), "utf8")) as TeamMetricsPacket[];
   const agg = new Aggregator();
-  agg.ingestMany(packets);
-  const s = agg.summarize("org_demo", team, PERIOD);
+  await agg.ingestMany(packets);
+  const s = await agg.summarize("org_demo", team, PERIOD);
   const metrics = s.privacy_status === "visible" ? `avg=${s.avg_friction} trend=${s.trend} helpful=${s.helpful_rate}` : "(métricas suprimidas)";
   console.log(`  ${label.padEnd(10)} -> contributors=${s.contributor_count} privacy=${s.privacy_status.padEnd(18)} ${metrics}`);
 }

@@ -41,7 +41,7 @@
     "expires_at": { "type": "string", "format": "date-time" },
     "decision_source": {
       "type": "string",
-      "enum": ["bedrock", "cache", "local_policy", "mock"]
+      "enum": ["bedrock", "anthropic", "deepseek", "cache", "local_policy", "mock"]
     },
     "fallback": { "type": "boolean" }
   }

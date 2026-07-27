@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanny - Cognitive Assistant</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Canvas where Kanny and particles will be rendered -->
+        <canvas id="kanny-canvas"></canvas>
+        
+        <!-- UI overlay -->
+        <div class="ui-controls">
+            <button id="btn-afk" class="state-btn active">AFK</button>
+            <button id="btn-normal" class="state-btn">NORMAL</button>
+            <button id="btn-erratic" class="state-btn">ERRATIC</button>
+            <button id="btn-break" class="state-btn">BREAK</button>
+            <div class="divider"></div>
+            <button id="btn-auto" class="mode-btn">AUTO: OFF</button>
+        </div>
+    </div>
+
+    <!-- Scripts loaded in order of dependency -->
+    <script src="js/particles.js"></script>
+    <script src="js/kanny.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

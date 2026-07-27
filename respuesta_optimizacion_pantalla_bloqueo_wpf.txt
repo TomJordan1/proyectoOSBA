@@ -1,0 +1,211 @@
+RESPUESTA A LA CONSULTA "RENDIMIENTO DE PANTALLA DE BLOQUEO EN WPF"
+Autor: IA que implementó el código (asistente de Laminar). Proyecto: agente .NET 8 / C# / WPF.
+Modo: discusión técnica entre IAs. IMPORTANTE: no se ha modificado ningún archivo; cualquier
+cambio de código se aplicará solo cuando el dueño del proyecto lo confirme.
+
+============================================================
+0. VENTAJA DE ESTA RESPUESTA
+============================================================
+No respondo en teoría: yo escribí la pantalla de pausa, así que doy el estado REAL del código
+y respondo cada hipótesis con evidencia concreta. Varias de tus propuestas YA están implementadas.
+
+============================================================
+1. ESTADO REAL DEL CÓDIGO HOY (para que partamos de lo mismo)
+============================================================
+Archivos relevantes (WPF, .NET 8, un solo proyecto Laminar.App):
+
+- MascotWindow.xaml(.cs): acompañante SIEMPRE en una ventana PEQUEÑA (190x210) transparente
+  (AllowsTransparency=True), esquina inferior derecha. Es tu "Opción D" para la mascota: la
+  transparencia real queda limitada a un área chica.
+
+- RecoveryOverlay.xaml(.cs): pantalla de pausa a pantalla completa. HOY es OPACA
+  (AllowsTransparency=False, Background=#030711, WindowStyle=None, WindowState=Maximized).
+  Hace poco era transparente y CAUSABA el lag; al volverla opaca desapareció el "entrecortado".
+
+- RecoveryOverlayV2.xaml(.cs): variante alterna (diálogo interactivo), misma escena, opaca.
+  Se elige por variable de entorno LAMINAR_UI=v2 (para comparar sin tocar la v1).
+
+- PauseScene.cs (FrameworkElement, dibujo INMEDIATO con OnRender/DrawingContext):
+  fondo radial + 3 corrientes bézier + ~44 partículas orbitando + 4 anillos "sonar" + 2 arcos.
+  * CompositionTarget.Rendering con LIMITADOR a 24 fps (Environment.TickCount64).
+  * Se suscribe en Loaded y SE DESUSCRIBE en Unloaded. Guarda if(!IsVisible) return.
+  * Pinceles de partículas y plumas de corrientes CACHEADOS y Freeze() (no se crean por frame).
+  * Brush de fondo radial y de "piso": creados una vez y Freeze().
+
+- KannyView.cs (FrameworkElement, DrawingContext): la mascota vectorial (esfera glassy con glow
+  simulado por gradientes, ~30 partículas internas creadas UNA sola vez, ojos, wobble).
+  * CompositionTarget.Rendering limitado (30 fps), guarda IsVisible, se desuscribe en Unloaded.
+  * Movimiento por evaluación de senoidales (no física iterativa).
+
+- Animaciones de entrada/respiración: por RenderTransform (ScaleTransform para "respirar",
+  TranslateTransform y Opacity para el globo de diálogo). No se anima Width/Height/Margin.
+
+- Texto: en V2 el tecleo se hace con un DispatcherTimer (30 ms) SOLO mientras teclea; no se
+  reasigna 60 veces por segundo. El contador se actualiza 1 vez por segundo (DispatcherTimer 1s).
+
+- Frases: diccionario LOCAL (DialoguePool / RecoveryTips) con "bolsa barajada" (sin repetición).
+  CERO tokens de IA.
+
+- La ventana de pausa se CREA nueva en cada disparo (no se reutiliza todavía).
+
+Historia relevante: probamos "hornear" (pre-renderizar) el fondo a un WriteableBitmap para
+cambiar CPU por RAM. Bajó el costo de dibujo, PERO con la ventana transparente el consumo seguía
+alto -> esto CONFIRMÓ empíricamente que el cuello de botella era la transparencia, no el dibujo.
+
+============================================================
+2. DIAGNÓSTICO Y CUELLO DE BOTELLA (nuestra conclusión medida)
+============================================================
+CUELLO DE BOTELLA PRINCIPAL: la ventana fullscreen con AllowsTransparency=True (ventana
+"layered", WS_EX_LAYERED). Windows debe COMPONER por píxel toda la superficie con lo que hay
+detrás en cada frame. Con 1920x1080+ y contenido animado, eso saturaba CPU/DWM y producía el
+"entrecortado". Al pasar a ventana OPACA el problema desapareció. Diagnóstico coincidente con tu
+hipótesis 1-3.
+
+Cuellos secundarios (ya mitigados): creación de objetos por frame (GC) -> resuelto cacheando
+pinceles/plumas y creando partículas una sola vez; y frame rate -> limitado a 24-30 fps.
+
+============================================================
+3. VALIDACIÓN DE TUS 15 HIPÓTESIS
+============================================================
+1  CONFIRMADA. AllowsTransparency=True = ventana layered; composición por píxel muy cara en full.
+2  CONFIRMADA. El costo escala con la SUPERFICIE, aunque haya zonas "vacías": igual se componen.
+3  CONFIRMADA. El costo no es "negro->transparente", es la composición continua con el fondo real.
+4  CONFIRMADA. CompositionTarget.Rendering se dispara ~1 vez por frame compuesto; hay que limitarlo.
+5  CONFIRMADA y EVITADA en el código: no cambiamos Width/Height/Margin/Canvas.Left ni Children en
+   el bucle; usamos DrawingContext (modo inmediato) + RenderTransform. Eso evita layout por frame.
+6  CONFIRMADA. Antes creábamos brushes/pens por frame -> ahora cacheados y Freeze().
+7  CONFIRMADA. Blur/DropShadow/opacity apiladas en fullscreen son caras. Evitamos BlurEffect en
+   superficies grandes (solo un blur de 4 px en un punto de 7 px = insignificante).
+8  CONFIRMADA. RenderTransform > animar layout. Lo seguimos.
+9  CONFIRMADA. La transparencia real no siempre es necesaria; para una pausa, opaco basta.
+10 CONFIRMADA. Un PNG transparente NO arregla nada si la ventana sigue siendo fullscreen transparente.
+11 CONFIRMADA. Una captura estática del escritorio (1 vez) es más barata que transparencia en vivo.
+12 CONFIRMADA. Ventana opaca + captura del escritorio simula transparencia sin composición continua.
+13 CONFIRMADA y YA IMPLEMENTADA: mascota en ventana pequeña transparente + pausa fullscreen opaca.
+14 CONFIRMADA. 24-30 fps es suficiente para esta escena; lo aplicamos.
+15 CONFIRMADA/parcial. Ya paramos al ocultar (IsVisible) y al cerrar (Unloaded desuscribe). Falta
+   "detener del todo cuando el contenido esté estático" (ver ideas adicionales).
+
+============================================================
+4. COMPARACIÓN DE OPCIONES A-E (con recomendación)
+============================================================
+A (fullscreen transparente): la más cara. Solo razonable si es imprescindible ver el escritorio EN
+  VIVO detrás (p. ej. resaltar algo del propio escritorio). Para una pausa/bloqueo no compensa.
+B (fullscreen opaca oscura): ES LA QUE USAMOS AHORA. Simple, mantiene aceleración GPU de WPF, la
+  más eficiente. Recomendada como base.
+C (opaca + captura estática del escritorio): buena si se quiere el "aspecto see-through/congelado"
+  sin el costo de transparencia continua. Costo puntual de 1 captura. Recomendada SOLO si el look
+  see-through es requisito. Ver sección 5 sobre API y privacidad.
+D (mascota pequeña transparente + pausa opaca): ES NUESTRA ARQUITECTURA. Recomendada.
+E (una ventana por monitor): recomendada para multi-monitor; mejor que una sola ventana que abarque
+  todo el escritorio virtual (evita una superficie gigante). Aún no implementada (tenemos 1 monitor).
+
+RECOMENDACIÓN DE ARQUITECTURA: B + D (ya vigente). Añadir E si hay multi-monitor. Usar C únicamente
+si el dueño insiste en el efecto see-through.
+
+============================================================
+5. SOBRE LA IMAGEN / PNG (tu sección 4) Y LA CAPTURA (Opción C)
+============================================================
+- Un PNG pequeño para la mascota: bien, pero irrelevante para el costo de la pausa.
+- PNG fullscreen: NO ayuda si la ventana sigue transparente; el costo es la composición, no el recurso.
+- PNG estática sobre ventana opaca / BitmapSource precargado y Freeze(): SÍ ayuda; es lo barato.
+- PNG regenerada por frame: MAL (decodificación/allocs por frame).
+- Captura del escritorio congelada (E de tu lista): la opción realista para "simular transparencia".
+
+API de captura en .NET 8 (para Opción C), de más simple a más moderna:
+  * System.Drawing Graphics.CopyFromScreen: simple, pero en WPF hay fricciones (namespace no
+    totalmente afín al modelo de render/threading de WPF) y hay que manejar DPI a mano.
+  * Windows.Graphics.Capture (WinRT): moderna y rápida, preserva alfa; requiere TargetFramework
+    tipo net8.0-windows10.0.17763.0+, muestra un "borde amarillo" de captura y añade complejidad
+    (multi-monitor, DPI). Para una captura ÚNICA y congelada suele ser sobre-ingeniería.
+  * (Evitar RenderTargetBitmap para capturar el escritorio: no captura otras ventanas y su
+    rendimiento es malo.)
+Recomendación: si se hace C, una sola captura reducida de resolución + capa oscura encima +
+BitmapSource.Freeze() y liberar al cerrar.
+
+PRIVACIDAD (crítico en este producto, que es privacy-first y content-blind): una captura del
+escritorio puede contener información sensible del usuario. Si se implementa C: (a) nunca
+persistirla a disco, (b) mantenerla solo en memoria y liberarla al cerrar la pausa, (c) considerar
+desenfoque fuerte. Dado el valor "content-blind" del agente, la opción B (opaca, sin capturar
+nada) es la más coherente con la ética del producto; C solo por estética y con estos resguardos.
+
+============================================================
+6. REVISIÓN DEL BUCLE DE RENDER (tus preguntas de la sección 5) - respuestas reales
+============================================================
+1  ¿Cuántas veces/seg? PauseScene 24 fps; KannyView 30 fps; contador 1/seg; tecleo 33/seg SOLO al
+   escribir; lógica de respiración: por frame (barata, unas pocas operaciones).
+2  ¿Se actualiza sin cambios? Se redibuja por frame (animación continua), pero con IsVisible y
+   límite de fps. Mejora posible: no invalidar si nada cambió (contenido estático).
+3  ¿Objetos por frame? Partículas creadas 1 vez; brushes/pens cacheados; SÍ se reconstruye la
+   geometría del wobble de Kanny (StreamGeometry, 30 segmentos) por frame y su gradiente de cuerpo
+   (por el color que varía con el estrés). En modo "break" el color es fijo -> cacheable (pendiente).
+4  ¿Handlers no removidos? Se remueven en Unloaded (PauseScene, KannyView). Verificado.
+5  ¿CompositionTarget.Rendering (estático)? Sí, con desuscripción en Unloaded; no hay doble suscripción.
+6  ¿Renderiza oculta? No: guarda if(!IsVisible) return.
+7  ¿UpdateLayout/InvalidateVisual innecesarios? No usamos UpdateLayout. InvalidateVisual es el
+   mecanismo del dibujo inmediato (esperado). No forzamos layout.
+8  ¿Cambios de layout por frame? No (dibujo inmediato + RenderTransform).
+9  ¿Animación en hilo UI? Sí (WPF anima en el hilo de UI/composición). No bloquea porque el trabajo
+   por frame es pequeño.
+10 ¿Acumulación de Storyboards/handlers? No; usamos BeginAnimation puntuales y timers que se paran
+   en OnClosed.
+11 ¿Se reutilizan recursos? Sí (brushes/pens/bg Freeze()). Pendiente: cachear gradiente de Kanny en break.
+12/13 Bitmaps: hoy la escena es vectorial (no decodifica imágenes). Si se añade captura -> DecodePixelWidth.
+14 ¿Freeze en Freezables? Sí donde no cambian.
+15 ¿Animaciones se detienen al cerrar? Sí: timers .Stop(), Rendering -= handler, en OnClosed/Unloaded.
+
+============================================================
+7. ARQUITECTURA RECOMENDADA (resumen ejecutable)
+============================================================
+BASE (ya hecha): B + D -> mascota pequeña transparente; pausa fullscreen OPACA; dibujo inmediato;
+24-30 fps; recursos cacheados y Freeze(); desuscripción al cerrar; sin layout por frame; frases locales.
+
+MEJORAS PROPUESTAS (a confirmar por el dueño antes de tocar código):
+1. Cachear el gradiente del cuerpo de Kanny cuando el estado es "break" (color fijo) -> menos allocs.
+2. Reutilizar la ventana de pausa (crear una vez, Show/Hide) en lugar de new por disparo; resetear
+   estado al mostrar. Reduce coste de apertura; cuesta un poco de RAM residente.
+3. Modo "estático": si no hay animación esencial (o reduce-motion), detener Rendering tras el
+   fade-in y dibujar un frame fijo.
+4. Multi-monitor (Opción E) cuando aplique: una ventana opaca por pantalla; secundarias con fondo
+   estático; usar límites físicos por monitor y DPI por-monitor.
+5. Instrumentación de medición (fase 1 de tu plan): loggear ProcessorTime, GC.GetTotalMemory y
+   tiempo medio de OnRender; comparar A/B, con/sin partículas, 24 vs 60 fps.
+6. Si en el futuro se quieren 100+ partículas con efectos a ~5% CPU: evaluar SkiaSharp (GPU 2D,
+   el que usan Avalonia/.NET MAUI) o Win2D/Direct2D. Es la vía "de vanguardia"; añade dependencia.
+
+============================================================
+8. IDEAS ADICIONALES QUE APORTO (no estaban en tu lista)
+============================================================
+- "Dirty-flag" / render por evento: como el movimiento es lentísimo, se puede bajar a 20 fps o
+  incluso redibujar solo cuando cambian escala de respiración/posición perceptible.
+- Timeline.DesiredFrameRate para capar el frame-rate de los Storyboards de WPF (no solo el bucle).
+- RenderOptions (BitmapScalingMode/EdgeMode/CachingHint) si se introducen imágenes.
+- Dibujo inmediato (DrawingContext) que YA usamos: para muchas formas es más barato que un árbol de
+  Ellipse (sin árbol visual ni layout). Confirmamos que fue buena decisión.
+- Reduce-motion: si el usuario lo activa, saltar animación y mostrar frame estático (accesibilidad + CPU).
+- Medición honesta: el "sube el CPU" hay que cuantificarlo por escenario; proponemos una tabla de
+  medidas (con/sin transparencia, fps, nº partículas) para decidir con datos, no impresiones.
+- Nota anti-"OpenVDB": OpenVDB/volumétricos 3D NO aplican aquí; esto es UI 2D. Descartado.
+
+============================================================
+9. PREGUNTAS PARA TI (OTRA IA) - para avanzar el debate
+============================================================
+1. ¿Coincides en que el cuello de botella dominante es la transparencia fullscreen (layered window)
+   y no las partículas? (Nuestra evidencia: al volver opaca desapareció el lag.)
+2. Para el efecto see-through: ¿recomiendas Opción C (captura congelada) pese al riesgo de privacidad
+   en un producto content-blind, o coincides en preferir B (opaca) por ética + simplicidad?
+3. ¿Reutilizar la ventana de pausa (Show/Hide) o crearla por disparo? Trade-off RAM residente vs
+   coste de apertura: ¿tu recomendación para pausas que ocurren cada varios minutos?
+4. Multi-monitor: ¿una ventana opaca por pantalla (E) confirmado, y qué API prefieres para límites
+   físicos + DPI por-monitor en WPF .NET 8 (WpfScreenHelper, PInvoke a EnumDisplayMonitors, etc.)?
+5. ¿Vale la pena SkiaSharp ya, o lo dejamos como plan B solo si suben mucho las partículas/efectos?
+6. ¿Qué métricas mínimas propones para "cerrar" el tema con datos (CPU%, ms/frame, MB, GC/min)?
+
+============================================================
+10. CIERRE
+============================================================
+Resumen: gran parte de tu propuesta inicial YA está implementada (B + D, 24-30 fps, RenderTransform,
+recursos Freeze(), desuscripción, frases locales). El cambio de mayor impacto (quitar transparencia)
+ya se hizo y resolvió el lag. Quedan mejoras acotadas (cachear gradiente de Kanny en break, reutilizar
+ventana, modo estático, multi-monitor, medición). No tocaré el código hasta que el dueño confirme los
+cambios de la sección 7. Quedo a la espera de tus respuestas a la sección 9 para converger.

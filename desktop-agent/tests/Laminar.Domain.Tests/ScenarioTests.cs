@@ -27,7 +27,7 @@ public class ScenarioTests
     [Fact]
     public async Task B_friction_launch_bubble()
     {
-        var r = await Client().DecideAsync(Req(0.86, 4, false, false, 48, "bubbles", false, 45));
+        var r = await Client().DecideAsync(Req(0.86, 6, false, false, 48, "bubbles", false, 45));
         Assert.Equal(LaminarAction.launch_bubble_recovery, r.Action);
         Assert.True(r.Arguments.DurationSeconds <= 60);
     }
@@ -43,7 +43,7 @@ public class ScenarioTests
     [Fact]
     public async Task D_resumed_subtle_notification()
     {
-        var r = await Client().DecideAsync(Req(0.80, 3, false, false, 20, "breathing", true, 30));
+        var r = await Client().DecideAsync(Req(0.80, 5, false, false, 20, "breathing", true, 30));
         Assert.Equal(LaminarAction.show_subtle_notification, r.Action);
     }
 

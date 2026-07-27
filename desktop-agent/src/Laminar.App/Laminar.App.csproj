@@ -8,10 +8,15 @@
     <UseWindowsForms>true</UseWindowsForms>
     <!-- Evita choques WinForms/WPF (Color, Application, KeyEventArgs...) al desactivar usings globales -->
     <ImplicitUsings>disable</ImplicitUsings>
+    <!-- Ícono propio de Kandace para el ejecutable, accesos directos y bandeja. -->
+    <ApplicationIcon>kandace.ico</ApplicationIcon>
+    <!-- El ejecutable se llama Kandace.exe (no Laminar.App.exe). -->
+    <AssemblyName>Kandace</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Laminar.Domain/Laminar.Domain.csproj" />
     <ProjectReference Include="../Laminar.Friction/Laminar.Friction.csproj" />
+    <ProjectReference Include="../Laminar.Context/Laminar.Context.csproj" />
     <ProjectReference Include="../Laminar.AgentClient/Laminar.AgentClient.csproj" />
     <ProjectReference Include="../Laminar.Interventions/Laminar.Interventions.csproj" />
   </ItemGroup>

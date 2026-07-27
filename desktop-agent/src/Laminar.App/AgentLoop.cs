@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using Laminar.Domain;
 using Laminar.Friction;
+using Laminar.Context;
 using Laminar.AgentClient;
 
 namespace Laminar.App;
@@ -65,21 +66,42 @@ public sealed class SimulatedMetricsSource : IMetricsSource
 public sealed class AgentLoop
 {
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(3) };
-    private readonly MockAgentClient _client;
+    private readonly IAgentClient _client;
     private readonly ResponseValidator _validator;
     private readonly FrictionOptions _options = new();
     private readonly IMetricsSource _source;
     private readonly Action<DecisionResponse, DecisionRequest> _onDecision;
+    private readonly Action<double>? _onStress;
+    private readonly Action<bool>? _onProtected;
+    // Guardas locales: filtran antes de llamar a la nube (FinOps).
+    private readonly SustainedAnomalyGate _anomaly;
+    private readonly CooldownGate _cooldown;
+    private readonly LocalBudgetGate _localBudget = new();
+    private readonly ContextSensor? _context;
+    // Silencio dinámico (back-off / ventana de gracia anti-bucle). Lo fija App según la reacción del usuario.
+    private DateTime _snoozeUntil = DateTime.MinValue;
 
     public bool Paused { get; set; }
     public bool Presenting { get; set; }
     public bool QuietMode { get; set; }
 
-    public AgentLoop(IMetricsSource source, Action<DecisionResponse, DecisionRequest> onDecision)
+    /// <summary>Silencia la detección hasta el instante indicado (back-off / gracia).</summary>
+    public void Snooze(DateTime until) { if (until > _snoozeUntil) _snoozeUntil = until; }
+
+    /// <param name="client">Cliente de decisión. Si es null usa el mock local (modo demo).</param>
+    /// <param name="context">Detector de contexto real (reunión/pantalla completa). Opcional.</param>
+    /// <param name="onStress">Callback por tick con el score de fricción [0..1] (para el acompañante).</param>
+    /// <param name="onProtected">Callback por tick: true si el contexto es protegido (reunión/pantalla completa).</param>
+    public AgentLoop(IMetricsSource source, Action<DecisionResponse, DecisionRequest> onDecision, IAgentClient? client = null, ContextSensor? context = null, Action<double>? onStress = null, Action<bool>? onProtected = null)
     {
         _source = source;
         _onDecision = onDecision;
-        _client = new MockAgentClient(_options);
+        _context = context;
+        _onStress = onStress;
+        _onProtected = onProtected;
+        _client = client ?? new MockAgentClient(_options);
+        _anomaly = new SustainedAnomalyGate(_options);
+        _cooldown = new CooldownGate(_options);
         _validator = new ResponseValidator(_options);
         _timer.Tick += async (_, _) => await TickAsync();
     }
@@ -91,13 +113,36 @@ public sealed class AgentLoop
     {
         if (Paused) return;
         var m = _source.Sample();
-        var ctx = new DecisionContext(Presenting, Presenting, false, QuietMode, m.SessionMinutes, m.LastInterventionMinutes);
+        _onStress?.Invoke(m.Score); // alimenta la animación del acompañante cada tick
+        // Contexto real (si hay sensor): reunión = cámara/micrófono en uso o "presentando";
+        // pantalla completa detectada. Sin sensor, cae al toggle manual "Presentando".
+        bool meeting = Presenting || (_context?.MeetingActive() ?? false);
+        bool fullscreen = _context?.FullscreenActive() ?? false;
+        _onProtected?.Invoke(meeting || fullscreen); // App oculta a Kanny en reunión/pantalla completa
+        var ctx = new DecisionContext(meeting, Presenting, fullscreen, QuietMode, m.SessionMinutes, m.LastInterventionMinutes);
         var req = new DecisionRequest(
             "1.0", Guid.NewGuid().ToString(), DateTime.UtcNow.ToString("o"),
             new Laminar.Domain.Friction(m.Score, m.SustainedMinutes, m.DeleteZ, m.SwitchZ, m.CursorZ),
             ctx, new Preferences("bubbles", false, 45));
 
-        var raw = await _client.DecideAsync(req);
+        // Pre-filtro local (FinOps): resuelve los casos claros SIN llamar a la nube;
+        // solo consulta al backend cuando hay fricción sostenida y contexto disponible.
+        if (QuietMode || ContextGate.IsProtected(ctx)) return;
+        if (DateTime.UtcNow < _snoozeUntil) return; // back-off / ventana de gracia (anti-bucle)
+        if (!_anomaly.IsSustainedAnomaly(req.Friction)) return;
+        if (_cooldown.InCooldown(ctx)) return;
+        if (!_localBudget.TryConsume()) return;
+
+        DecisionResponse raw;
+        try
+        {
+            raw = await _client.DecideAsync(req);
+        }
+        catch
+        {
+            // Fallo de red/backend: omite este tick sin molestar (degradación segura).
+            return;
+        }
         var d = _validator.Revalidate(raw, ctx, DateTime.UtcNow); // doble validación
         _onDecision(d, req);
         if (d.Action != LaminarAction.do_nothing && d.Action != LaminarAction.postpone_intervention)

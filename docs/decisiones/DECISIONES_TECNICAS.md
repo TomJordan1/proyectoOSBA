@@ -21,3 +21,4 @@ Los cambios definitivos deben documentarse como ADR en `docs/adr/`.
 | ADR-015 | FinOps y control de llamadas al LLM (puertas + presupuesto) | Aceptada |
 | ADR-016 | Reestructuración B2B2E (Personal/Cloud/Teams, canales separados) | Aceptada |
 | ADR-017 | Capa de aprendizaje y evolución (bandit local, RAG futuro; post-MVP) | Aceptada (dirección) |
+| ADR-018 | Persistencia: repositorio + DynamoDB single-table (InMemory en dev) | Aceptada |

@@ -12,6 +12,7 @@ import { EXPLANATIONS } from "./explanations.js";
 import { Metrics } from "../observability/metrics.js";
 import { validateDecisionResponse } from "../validation/schemas.js";
 import { HistoryPolicy, isFeedbackResult } from "../learning/history-policy.js";
+import type { TrialGate } from "../policies/trial-gate.js";
 
 export interface EngineDeps {
   config: AppConfig;
@@ -22,6 +23,7 @@ export interface EngineDeps {
   breaker: CircuitBreaker;
   metrics: Metrics;
   learning?: HistoryPolicy; // capa de aprendizaje local opcional (ADR-017)
+  trialGate?: TrialGate; // tope de gasto por código de prueba (opcional; ADR-023)
   now?: () => Date;
   newId?: () => string;
 }
@@ -37,7 +39,7 @@ export class DecisionEngine {
     this.newId = deps.newId ?? (() => randomUUID());
   }
 
-  async decide(req: DecisionRequest): Promise<DecisionResponse> {
+  async decide(req: DecisionRequest, trialCode?: string): Promise<DecisionResponse> {
     const { config, metrics } = this.deps;
 
     const prior = this.deps.idempotency.get(req.event_id);
@@ -87,6 +89,17 @@ export class DecisionEngine {
       return this.finalize(req, { ...fb, reason_code: "PROVIDER_ERROR_FALLBACK" }, "local_policy", true, key);
     }
 
+    // Tope de gasto por código de prueba (si está activo): si el código venció o
+    // agotó su cupo, NO se llama a la IA y se cae a la política local.
+    if (this.deps.trialGate) {
+      const allowed = await this.deps.trialGate.allow(trialCode, this.now());
+      if (!allowed) {
+        metrics.inc("CallsPreventedByBudget");
+        const fb = localFallback(req, config);
+        return this.finalize(req, { ...fb, reason_code: "SERVER_BUDGET_LIMIT" }, "local_policy", true, key);
+      }
+    }
+
     // Invocación al proveedor (mock o bedrock).
     try {
       this.deps.budget.consume();
@@ -99,7 +112,9 @@ export class DecisionEngine {
       this.deps.cache.set(key, decision);
       metrics.inc(this.deps.provider.name === "bedrock" ? "BedrockInvocations" : "MockInvocations");
       return this.finalize(req, decision, this.deps.provider.name, false, key);
-    } catch {
+    } catch (err: any) {
+      // Log content-blind del error del proveedor (sin payload) para diagnóstico.
+      console.log(JSON.stringify({ evt: "provider_error", provider: this.deps.provider.name, name: err?.name ?? "unknown", msg: String(err?.message ?? "").slice(0, 180) }));
       this.deps.breaker.onFailure();
       metrics.inc("FallbackCount");
       const fb = localFallback(req, config);

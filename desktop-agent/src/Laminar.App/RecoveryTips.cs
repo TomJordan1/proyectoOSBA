@@ -9,7 +9,9 @@ namespace Laminar.App;
 public static class RecoveryTips
 {
     private static readonly Random _rng = new();
-    private static readonly string[] _tips =
+
+    // Valores por defecto (fallback). DEBE declararse antes de _tips (orden de init estático).
+    private static readonly string[] DefaultTips =
     {
         "Estira las manos y las muñecas unos segundos.",
         "Relaja los hombros y respira hondo tres veces.",
@@ -19,6 +21,9 @@ public static class RecoveryTips
         "Toma agua y suelta la tensión de la mandíbula.",
         "Afloja los dedos y rota las muñecas despacio.",
     };
+
+    // Efectivos = por defecto, sobreescritos por la clave "tips" de kanny.frases.json.
+    private static readonly string[] _tips = PhraseConfig.Get("tips", DefaultTips);
 
     public static string Random() => _tips[_rng.Next(_tips.Length)];
 }

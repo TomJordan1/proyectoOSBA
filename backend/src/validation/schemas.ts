@@ -81,7 +81,7 @@ export const decisionResponseSchema = {
     },
     explanation: { type: "string", maxLength: 240 },
     expires_at: { type: "string", format: "date-time" },
-    decision_source: { type: "string", enum: ["bedrock", "cache", "local_policy", "mock"] },
+    decision_source: { type: "string", enum: ["bedrock", "anthropic", "deepseek", "cache", "local_policy", "mock"] },
     fallback: { type: "boolean" },
   },
 } as const;

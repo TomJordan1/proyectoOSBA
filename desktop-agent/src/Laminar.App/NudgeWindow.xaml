@@ -1,0 +1,79 @@
+<Window x:Class="Laminar.App.NudgeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Kanny" WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        ShowInTaskbar="False" ShowActivated="False" Topmost="True"
+        SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+    <!-- Aviso SUAVE: no roba el foco, no tapa la pantalla. La pausa completa solo si el
+         usuario acepta. Si lo ignora, se cierra solo (feedback: "ahora no"). -->
+    <Border Width="330" CornerRadius="16" Padding="18,15" Margin="14"
+            BorderBrush="#2E78E1EB" BorderThickness="1">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#F00B1620" Offset="0"/>
+                <GradientStop Color="#F0060D15" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="24" ShadowDepth="0" Opacity="0.5" Color="#000000"/>
+        </Border.Effect>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Ellipse Width="9" Height="9" Fill="#36E6EE" VerticalAlignment="Center">
+                    <Ellipse.Effect><BlurEffect Radius="5"/></Ellipse.Effect>
+                </Ellipse>
+                <TextBlock Text="Kanny" Foreground="#DFFEFF" FontWeight="SemiBold"
+                           Margin="10,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <TextBlock x:Name="Msg" Text="¿Un respiro conmigo?" Foreground="#F5FBFF"
+                       FontSize="15" TextWrapping="Wrap" Margin="0,10,0,0"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+                <Button x:Name="LaterBtn" Content="Ahora no" Click="OnDecline"
+                        Padding="12,6" Margin="0,0,8,0" Foreground="#9DB8C4"
+                        BorderThickness="0" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#12FFFFFF"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border CornerRadius="999" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#1EFFFFFF"/></Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Button x:Name="PauseBtn" Content="Tomar pausa" Click="OnAccept"
+                        Padding="14,6" Foreground="#04121A" FontWeight="SemiBold"
+                        BorderThickness="0" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#36E6EE"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border CornerRadius="999" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#5AF0F6"/></Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

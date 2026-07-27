@@ -17,6 +17,17 @@ export interface AppConfig {
   // Capa de aprendizaje local (ADR-017); opt-in, por defecto desactivada.
   learningEnabled: boolean;
   learningMinSamples: number;
+  aggregatesTable: string | undefined;
+  awsRegion: string | undefined;
+  // Proveedor Anthropic directo (alternativa a Bedrock; usa la API de Anthropic).
+  anthropicApiKey: string | undefined;
+  anthropicModel: string | undefined;
+  // Proveedor DeepSeek (API compatible con OpenAI; más económico).
+  deepseekApiKey: string | undefined;
+  deepseekModel: string | undefined;
+  // Gate de códigos de prueba (tope de gasto por usuario). Tabla en DynamoDB.
+  trialCodesTable: string | undefined;
+  trialMaxCalls: number; // tope de llamadas a la IA por código (proxy de ~US$0.50)
 }
 
 function num(v: string | undefined, def: number): number {
@@ -46,5 +57,13 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     maxRecoveryDurationSeconds: num(env.MAX_RECOVERY_DURATION_SECONDS, 60),
     learningEnabled: bool(env.LEARNING_ENABLED, false),
     learningMinSamples: num(env.LEARNING_MIN_SAMPLES, 5),
+    aggregatesTable: env.AGGREGATES_TABLE,
+    awsRegion: env.AWS_REGION,
+    anthropicApiKey: env.ANTHROPIC_API_KEY && env.ANTHROPIC_API_KEY.trim() !== "" ? env.ANTHROPIC_API_KEY : undefined,
+    anthropicModel: env.ANTHROPIC_MODEL && env.ANTHROPIC_MODEL.trim() !== "" ? env.ANTHROPIC_MODEL : undefined,
+    deepseekApiKey: env.DEEPSEEK_API_KEY && env.DEEPSEEK_API_KEY.trim() !== "" ? env.DEEPSEEK_API_KEY : undefined,
+    deepseekModel: env.DEEPSEEK_MODEL && env.DEEPSEEK_MODEL.trim() !== "" ? env.DEEPSEEK_MODEL : "deepseek-chat",
+    trialCodesTable: env.TRIAL_CODES_TABLE && env.TRIAL_CODES_TABLE.trim() !== "" ? env.TRIAL_CODES_TABLE : undefined,
+    trialMaxCalls: num(env.TRIAL_MAX_CALLS, 400),
   };
 }

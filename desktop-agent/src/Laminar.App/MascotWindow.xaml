@@ -1,7 +1,8 @@
 <Window x:Class="Laminar.App.MascotWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Laminar" Width="160" Height="180"
+        xmlns:local="clr-namespace:Laminar.App"
+        Title="Laminar" Width="190" Height="210"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         Topmost="True" ShowInTaskbar="False" ResizeMode="NoResize"
         MouseLeftButtonDown="OnDrag" MouseDoubleClick="OnOpenConfig">
@@ -15,43 +16,13 @@
     <Grid>
         <!-- Globo de mensaje (oculto por defecto) -->
         <Border x:Name="Bubble" Visibility="Collapsed" VerticalAlignment="Top" HorizontalAlignment="Center"
-                Background="#161C2A" CornerRadius="10" Padding="10,6" Margin="0,0,0,6" MaxWidth="150">
+                Background="#161C2A" CornerRadius="10" Padding="10,6" Margin="0,0,0,6" MaxWidth="170" Panel.ZIndex="2">
             <TextBlock x:Name="BubbleText" Foreground="#E6EDF3" FontSize="11" TextWrapping="Wrap"/>
         </Border>
 
-        <!-- Personaje (placeholder vectorial; se puede reemplazar por sprite/GIF pixelado) -->
-        <Viewbox Width="110" Height="120" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-            <Canvas Width="100" Height="110" RenderTransformOrigin="0.5,1">
-                <Canvas.RenderTransform>
-                    <ScaleTransform x:Name="Breath" ScaleX="1" ScaleY="1"/>
-                </Canvas.RenderTransform>
-                <!-- sombra -->
-                <Ellipse Canvas.Left="20" Canvas.Top="98" Width="60" Height="12" Fill="#40000000"/>
-                <!-- cuerpo -->
-                <Ellipse Canvas.Left="15" Canvas.Top="20" Width="70" Height="75" Fill="#4FD1C5"/>
-                <Ellipse Canvas.Left="15" Canvas.Top="20" Width="70" Height="75" Stroke="#2C7A7B" StrokeThickness="2"/>
-                <!-- ojos -->
-                <Ellipse x:Name="EyeL" Canvas.Left="33" Canvas.Top="45" Width="12" Height="12" Fill="#0F1420"/>
-                <Ellipse x:Name="EyeR" Canvas.Left="55" Canvas.Top="45" Width="12" Height="12" Fill="#0F1420"/>
-                <!-- brillo ojos -->
-                <Ellipse Canvas.Left="36" Canvas.Top="47" Width="4" Height="4" Fill="White"/>
-                <Ellipse Canvas.Left="58" Canvas.Top="47" Width="4" Height="4" Fill="White"/>
-                <!-- boca -->
-                <Path x:Name="Mouth" Stroke="#0F1420" StrokeThickness="2" Data="M 40,68 Q 50,76 60,68"/>
-            </Canvas>
-        </Viewbox>
+        <!-- Kanny: dibujo inmediato (KannyView), reacciona al estrés real -->
+        <local:KannyView x:Name="Kanny" Width="180" Height="180" BaseRadius="52"
+                         ParticleCount="20" TargetFps="30"
+                         VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
     </Grid>
-
-    <Window.Triggers>
-        <EventTrigger RoutedEvent="Window.Loaded">
-            <BeginStoryboard>
-                <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                    <DoubleAnimation Storyboard.TargetName="Breath" Storyboard.TargetProperty="ScaleY"
-                                     From="1.0" To="1.06" Duration="0:0:1.4"/>
-                    <DoubleAnimation Storyboard.TargetName="Breath" Storyboard.TargetProperty="ScaleX"
-                                     From="1.0" To="0.98" Duration="0:0:1.4"/>
-                </Storyboard>
-            </BeginStoryboard>
-        </EventTrigger>
-    </Window.Triggers>
 </Window>

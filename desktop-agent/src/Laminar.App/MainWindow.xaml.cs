@@ -28,9 +28,9 @@ public partial class MainWindow : Window
         var req = (sender as FrameworkElement)?.Name switch
         {
             "BtnA" => Build(0.30, 0, false, quiet, 90, "bubbles", reduced, 45),
-            "BtnB" => Build(0.86, 4, false, quiet, 48, "bubbles", reduced, 45),
-            "BtnC" => Build(0.88, 5, true,  quiet, 60, "bubbles", reduced, 45),
-            "BtnD" => Build(0.80, 3, false, quiet, 20, "breathing", true, 30),
+            "BtnB" => Build(0.86, 6, false, quiet, 48, "bubbles", reduced, 45),
+            "BtnC" => Build(0.88, 6, true,  quiet, 60, "bubbles", reduced, 45),
+            "BtnD" => Build(0.80, 5, false, quiet, 20, "breathing", true, 30),
             _ => Build(0.30, 0, false, quiet, 90, "bubbles", reduced, 45)
         };
 
@@ -44,7 +44,12 @@ public partial class MainWindow : Window
         if (d.Action == LaminarAction.launch_bubble_recovery)
         {
             var seconds = d.Arguments.DurationSeconds ?? 45;
-            new RecoveryOverlay(seconds, req.Preferences.ReducedMotion) { Owner = this }.Show();
+            bool useV2 = AgentSettings.Load().UseV2; // respeta la config (v2 conversacional por defecto)
+            Window ov = useV2
+                ? new RecoveryOverlayV2(seconds, req.Preferences.ReducedMotion)
+                : new RecoveryOverlay(seconds, req.Preferences.ReducedMotion);
+            ov.Owner = this;
+            ov.Show();
         }
     }
 

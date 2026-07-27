@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+  body {
+    @apply font-sans overflow-x-hidden text-slate-700 dark:text-slate-100;
+    min-width: 320px;
+    background: #f4f7fb;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 300ms ease, color 300ms ease;
+  }
+  html.dark body { background: #0b1120; }
+  button, a { -webkit-tap-highlight-color: transparent; }
+  ::selection { background-color: #22d3ee; color: #0b1120; }
+}
+
+@layer components {
+  .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(15, 23, 42, 0.08); }
+  .dark .glass-panel { background: rgba(15, 23, 42, 0.65); border-color: rgba(255, 255, 255, 0.08); }
+  .glass-nav { background: rgba(255, 255, 255, 0.78); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(15, 23, 42, 0.06); }
+  .dark .glass-nav { background: rgba(11, 17, 32, 0.74); border-bottom-color: rgba(255, 255, 255, 0.06); }
+  .lindy-gradient-text { background: linear-gradient(135deg, #0f172a 0%, #0369a1 42%, #0891b2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .dark .lindy-gradient-text { background: linear-gradient(135deg, #fff 0%, #cbd5e1 42%, #22d3ee 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .glow-button { box-shadow: 0 0 25px rgba(6, 182, 212, 0.35); }
+  .glow-button:hover { box-shadow: 0 0 42px rgba(6, 182, 212, 0.55); }
+
+
+  .interactive-card {
+    position: relative;
+    isolation: isolate;
+    transition: transform 380ms cubic-bezier(.2,.8,.2,1), box-shadow 380ms ease, background-color 380ms ease, border-color 380ms ease;
+  }
+  .interactive-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    z-index: 2;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(125deg, rgba(34,211,238,.08), rgba(103,232,249,.95), rgba(59,130,246,.5), rgba(34,211,238,.08));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 320ms ease;
+  }
+  .interactive-card::after {
+    content: '';
+    position: absolute;
+    inset: 18% 10% -16%;
+    z-index: -1;
+    border-radius: inherit;
+    background: radial-gradient(circle, rgba(34,211,238,.15), transparent 68%);
+    filter: blur(24px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 320ms ease;
+  }
+  .interactive-card:hover,
+  .interactive-card:focus-visible,
+  .interactive-card:focus-within {
+    transform: translate3d(0, -7px, 0) scale(1.012);
+    border-color: rgba(103,232,249,.36);
+    box-shadow: 0 22px 70px rgba(6,182,212,.17), 0 0 0 1px rgba(34,211,238,.08);
+  }
+  .interactive-card:hover::before,
+  .interactive-card:focus-visible::before,
+  .interactive-card:focus-within::before,
+  .interactive-card:hover::after,
+  .interactive-card:focus-visible::after,
+  .interactive-card:focus-within::after { opacity: 1; }
+  .interactive-card:focus-visible { outline: 2px solid #67e8f9; outline-offset: 4px; }
+
+  .pricing-card {
+    position: relative;
+    transform: translate3d(0, 0, 0);
+    transform-style: preserve-3d;
+    transition: transform 480ms cubic-bezier(.16,1,.3,1), box-shadow 480ms cubic-bezier(.16,1,.3,1), border-color 360ms ease, background-color 360ms ease;
+  }
+  .pricing-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, transparent 18%, rgba(103,232,249,.85), transparent 82%) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    opacity: 0;
+    transition: opacity 360ms ease;
+    pointer-events: none;
+  }
+  .pricing-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(115deg, transparent 28%, rgba(255,255,255,.11) 46%, transparent 64%);
+    opacity: 0;
+    transform: translate3d(-38%, 0, 0);
+    transition: transform 720ms cubic-bezier(.16,1,.3,1), opacity 300ms ease;
+    pointer-events: none;
+  }
+  .pricing-card:hover,
+  .pricing-card:focus-within {
+    transform: translate3d(0, -11px, 0) scale(1.025);
+    z-index: 20;
+    border-color: rgba(103, 232, 249, 0.52);
+    box-shadow: 0 28px 72px rgba(6,182,212,.2), 0 0 0 1px rgba(103,232,249,.08);
+  }
+  .pricing-card:hover::before,
+  .pricing-card:focus-within::before { opacity: 1; }
+  .pricing-card:hover::after,
+  .pricing-card:focus-within::after { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+/* Orbe "Kanny" renderizado en <canvas> (ver src/lib/kannyEngine.ts).
+   El contenedor .kanny-orb siempre ocupa el 100% del bloque padre; el
+   tamaño real se controla desde el layout (Tailwind) que envuelve cada
+   instancia. .companion-orb es la única variante con tamaño propio, ya
+   que su contenedor no define dimensiones fijas. */
+.kanny-orb { position: relative; width: 100%; height: 100%; }
+.kanny-orb canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.companion-orb { width: 92px; height: 92px; }
+
+@media (max-width: 767px) {
+  .kanny-companion { left: auto !important; right: 1rem; bottom: 1.25rem; transform: none !important; }
+  .kanny-companion .companion-orb { width: 58px; height: 58px; }
+  .pricing-card:hover, .pricing-card:focus-within { transform: translate3d(0, -7px, 0) scale(1.012); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  .interactive-card:hover, .interactive-card:focus-visible, .interactive-card:focus-within,
+  .pricing-card:hover, .pricing-card:focus-within { transform: none; }
+}

@@ -27,10 +27,32 @@ Parameters:
     Type: Number
     Default: 7
     AllowedValues: [3, 5, 7]
+  AnthropicApiKey:
+    Type: String
+    Default: ""
+    NoEcho: true
+    Description: API key de Anthropic. Se pasa en el deploy (--parameter-overrides); NO se guarda en el repo. Si está vacía, se usa Bedrock/mock.
+  AnthropicModel:
+    Type: String
+    Default: "claude-haiku-4-5-20251001"
+    Description: Modelo de la API de Anthropic (nombre de la API, no el modelId de Bedrock).
+  DeepSeekApiKey:
+    Type: String
+    Default: ""
+    NoEcho: true
+    Description: API key de DeepSeek. Se pasa en el deploy (--parameter-overrides); NO se guarda en el repo. Si está presente, DeepSeek tiene prioridad sobre Anthropic/Bedrock.
+  DeepSeekModel:
+    Type: String
+    Default: "deepseek-chat"
+    Description: Modelo de la API de DeepSeek (compatible con OpenAI).
+  TrialMaxCalls:
+    Type: Number
+    Default: 400
+    Description: Tope de llamadas a la IA por código de prueba (proxy de ~US$0.50). Al agotarse, el backend cae a política local.
 
 Globals:
   Function:
-    Runtime: nodejs20.x
+    Runtime: nodejs22.x
     Timeout: 8
     MemorySize: 256
     Architectures: [x86_64]
@@ -48,9 +70,20 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: v1
+      # CORS: permite que el dashboard (otro origen) haga preflight y lea respuestas.
+      Cors:
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization,x-api-key,x-trial-code'"
+        AllowOrigin: "'*'"
       # REST API para poder exigir API key, usage plan, throttling y quota.
       Auth:
-        ApiKeyRequired: true
+        # API key NO global: si fuera global, el método OPTIONS de CORS también la
+        # exigiría y el preflight del navegador (sin key) daría 403. Se exige por
+        # método solo en los canales máquina (decisions, feedback, team-metrics).
+        ApiKeyRequired: false
+        Authorizers:
+          CognitoAuth:
+            UserPoolArn: !GetAtt LaminarUserPool.Arn
         UsagePlan:
           CreateUsagePlan: PER_API
           Throttle:
@@ -71,7 +104,16 @@ Resources:
       # Ejecutar `npm run build` en ../backend antes de `sam build`.
       CodeUri: ../backend/dist
       Handler: handlers/decision.handler
-      ReservedConcurrentExecutions: 2
+      Environment:
+        Variables:
+          # Secretos solo en esta función (motor de decisión). Vacío = usa el siguiente proveedor.
+          ANTHROPIC_API_KEY: !Ref AnthropicApiKey
+          ANTHROPIC_MODEL: !Ref AnthropicModel
+          DEEPSEEK_API_KEY: !Ref DeepSeekApiKey
+          DEEPSEEK_MODEL: !Ref DeepSeekModel
+          # Gate de código de prueba (tope de gasto por usuario).
+          TRIAL_CODES_TABLE: !Ref TrialCodesTable
+          TRIAL_MAX_CALLS: !Ref TrialMaxCalls
       Events:
         Decisions:
           Type: Api
@@ -79,20 +121,27 @@ Resources:
             RestApiId: !Ref LaminarApi
             Path: /decisions
             Method: post
-      # IAM MÍNIMO — plantilla PENDIENTE DE CONFIRMACIÓN (F0-03).
-      # Se deja comentado a propósito: no habilitar hasta tener modelId y despliegue supervisado.
-      # Policies:
-      #   - Statement:
-      #       - Effect: Allow
-      #         Action: ["bedrock:InvokeModel"]
-      #         Resource: !Sub "arn:aws:bedrock:${AWS::Region}::foundation-model/${BedrockModelId}"
+            Auth:
+              ApiKeyRequired: true
+      # IAM para Bedrock: InvokeModel sobre modelos base y perfiles de inferencia
+      # de la región (algunos modelos on-demand exigen inference profile). Acotado
+      # a la región y cuenta; el tope real de gasto vive en ServerBudgetGate.
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action: ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"]
+              Resource:
+                - !Sub "arn:aws:bedrock:${AWS::Region}::foundation-model/*"
+                - !Sub "arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:inference-profile/*"
+        # Lectura/escritura del contador de uso por código de prueba.
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TrialCodesTable
 
   FeedbackFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ../backend/dist
       Handler: handlers/feedback.handler
-      ReservedConcurrentExecutions: 2
       Events:
         Feedback:
           Type: Api
@@ -100,6 +149,8 @@ Resources:
             RestApiId: !Ref LaminarApi
             Path: /feedback
             Method: post
+            Auth:
+              ApiKeyRequired: true
 
   # --- Canal de AGREGACIÓN B2B2E (separado del canal de decisiones) ---
   AggregationFunction:
@@ -107,7 +158,6 @@ Resources:
     Properties:
       CodeUri: ../backend/dist
       Handler: handlers/team-metrics.handler
-      ReservedConcurrentExecutions: 2
       Environment:
         Variables:
           AGGREGATES_TABLE: !Ref AggregatesTable
@@ -118,16 +168,17 @@ Resources:
             RestApiId: !Ref LaminarApi
             Path: /team-metrics
             Method: post
-      # IAM MÍNIMO (plantilla). Descomentar en despliegue supervisado.
-      # Policies:
-      #   - DynamoDBCrudPolicy: { TableName: !Ref AggregatesTable }
+            Auth:
+              ApiKeyRequired: true
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AggregatesTable
 
   TeamSummaryFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ../backend/dist
       Handler: handlers/team-summary.handler
-      ReservedConcurrentExecutions: 2
       Environment:
         Variables:
           AGGREGATES_TABLE: !Ref AggregatesTable
@@ -138,8 +189,66 @@ Resources:
             RestApiId: !Ref LaminarApi
             Path: /teams/{teamId}/summary
             Method: get
-      # Policies:
-      #   - DynamoDBReadPolicy: { TableName: !Ref AggregatesTable }
+            # Endpoint humano: JWT de Cognito (sin API key; la key no es global).
+            Auth:
+              Authorizer: CognitoAuth
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref AggregatesTable
+
+  # --- Cognito: identidad de usuarios humanos de Laminar Teams (ADR-019) ---
+  LaminarUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: laminar-teams
+      UsernameAttributes: [email]
+      AutoVerifiedAttributes: [email]
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireUppercase: false
+          RequireSymbols: false
+      Schema:
+        # Atributo personalizado para multi-tenant: claim "custom:organization_id".
+        - Name: organization_id
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+          StringAttributeConstraints:
+            MinLength: "1"
+            MaxLength: "64"
+
+  LaminarUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref LaminarUserPool
+      ClientName: laminar-teams-web
+      GenerateSecret: false          # SPA público (PKCE); sin secreto
+      ExplicitAuthFlows:
+        - ALLOW_USER_PASSWORD_AUTH   # permite obtener token vía CLI para pruebas
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      SupportedIdentityProviders: [COGNITO]
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows: [code]
+      AllowedOAuthScopes: [openid, email, profile]
+      CallbackURLs:
+        - https://chic-wisp-df96c2.netlify.app/app.html
+        - http://localhost:8080/app.html
+        - http://localhost:5173/callback
+      LogoutURLs:
+        - https://chic-wisp-df96c2.netlify.app/app.html
+        - http://localhost:8080/app.html
+        - http://localhost:5173
+
+  LaminarUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      # Prefijo global único por cuenta para la Hosted UI de Cognito.
+      Domain: !Sub "laminar-${AWS::AccountId}"
+      UserPoolId: !Ref LaminarUserPool
 
   # --- DynamoDB on-demand, TTL, sin índices secundarios (solo agregados) ---
   AggregatesTable:
@@ -158,6 +267,22 @@ Resources:
           KeyType: RANGE
       TimeToLiveSpecification:
         AttributeName: ttl     # epoch; retención 30 días
+        Enabled: true
+
+  # Códigos de prueba: 1 item por código con contador de uso y vencimiento.
+  # PK = code. Atributos: active (bool), expiresAt (ISO), callsUsed (num), maxCalls (num opcional).
+  TrialCodesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: code
+          AttributeType: S
+      KeySchema:
+        - AttributeName: code
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: ttl     # epoch opcional para autolimpieza de códigos vencidos
         Enabled: true
 
   DecisionLogGroup:
@@ -185,3 +310,12 @@ Outputs:
   BedrockEnabledOut:
     Description: Estado del interruptor de Bedrock
     Value: !Ref BedrockEnabled
+  UserPoolId:
+    Description: ID del User Pool de Cognito (Laminar Teams)
+    Value: !Ref LaminarUserPool
+  UserPoolClientId:
+    Description: ID del App Client (SPA) para login del dashboard
+    Value: !Ref LaminarUserPoolClient
+  CognitoHostedUiDomain:
+    Description: Dominio de la Hosted UI de Cognito
+    Value: !Sub "https://laminar-${AWS::AccountId}.auth.${AWS::Region}.amazoncognito.com"

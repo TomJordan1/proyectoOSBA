@@ -37,3 +37,28 @@ PROMPT_*.md
 Reestruturacion/
 # Empaquetados
 *.zip
+
+# Config de distribución del agente (contiene API key)
+kandace.settings.json
+**/kandace.settings.json
+
+# Frases personalizadas locales (el ejemplo sí se versiona)
+kanny.frases.json
+**/kanny.frases.json
+
+# Publicados / instaladores / binarios grandes (van a S3, NO al repo)
+**/publish/
+**/installer/Output/
+*.exe
+
+# Archivos temporales de pruebas AWS (definiciones de ítems / políticas)
+item.json
+key.json
+demo.json
+jurado.json
+policy.json
+kandace_logs*.txt
+
+# Webs legadas locales (reemplazadas por web/ = Proyecto_uiinterface). No subir.
+laminar-web/
+landing/
