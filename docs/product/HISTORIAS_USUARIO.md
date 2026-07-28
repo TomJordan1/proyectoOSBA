@@ -2,13 +2,13 @@
 
 ## HU-01 Detectar fricción
 
-Como usuario, quiero que Laminar detecte cambios sin leer mi contenido.
+Como usuario, quiero que Kandace detecte cambios sin leer mi contenido.
 
 **Aceptación:** no se almacena texto y puedo ver las métricas agregadas.
 
 ## HU-02 No interrumpir
 
-Como usuario en reunión, quiero que Laminar permanezca silencioso.
+Como usuario en reunión, quiero que Kandace permanezca silencioso.
 
 **Aceptación:** con contexto protegido no aparece overlay.
 
@@ -20,7 +20,7 @@ Como usuario disponible, quiero una experiencia breve y no competitiva.
 
 ## HU-04 Comprender decisión
 
-Como usuario, quiero saber por qué Laminar intervino.
+Como usuario, quiero saber por qué Kandace intervino.
 
 **Aceptación:** cada acción muestra una explicación simple.
 

@@ -2,7 +2,7 @@
 
 ## Estado
 
-Aceptada (2026-07-24). Implementado en `Laminar.App` (Windows), activable con `LAMINAR_SENSORS=real`.
+Aceptada (2026-07-24). Implementado en `Kandace.App` (Windows), activable con `LAMINAR_SENSORS=real`.
 
 ## Contexto
 

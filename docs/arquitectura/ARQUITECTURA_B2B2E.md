@@ -2,7 +2,7 @@
 
 ## Componentes
 
-### Laminar Personal
+### Kandace Personal
 - sensores mínimos;
 - línea base;
 - fricción;
@@ -13,7 +13,7 @@
 - transparencia;
 - publicación agregada.
 
-### Laminar Cloud
+### Kandace Cloud
 - endpoint de decisiones;
 - Bedrock;
 - validación;
@@ -23,7 +23,7 @@
 - almacenamiento;
 - FinOps.
 
-### Laminar Teams
+### Kandace Teams
 - tendencias;
 - muestra;
 - retraso;

@@ -1,4 +1,4 @@
-# ADR-016: Reestructuración B2B2E y separación Laminar Personal / Cloud / Teams
+# ADR-016: Reestructuración B2B2E y separación Kandace Personal / Cloud / Teams
 
 ## Estado
 
@@ -6,15 +6,15 @@ Aceptada (2026-07-22).
 
 ## Contexto
 
-Laminar evoluciona de un agente individual a un SaaS híbrido **B2B2E**: la empresa financia una herramienta de autocuidado para el trabajador y recibe únicamente tendencias grupales, nunca vigilancia individual. Debe hacerse **sin reescribir** el MVP: se conserva el motor de decisiones, providers, guardas, FinOps, contratos A–D, desktop y SAM ya implementados y probados.
+Kandace evoluciona de un agente individual a un SaaS híbrido **B2B2E**: la empresa financia una herramienta de autocuidado para el trabajador y recibe únicamente tendencias grupales, nunca vigilancia individual. Debe hacerse **sin reescribir** el MVP: se conserva el motor de decisiones, providers, guardas, FinOps, contratos A–D, desktop y SAM ya implementados y probados.
 
 ## Decisión
 
 Tres componentes con responsabilidades claras:
 
-- **Laminar Personal** (.NET 8/WPF): sensores, fricción, decisión, intervención, feedback, historial local y publicación agregada. El detalle nunca sale del equipo.
-- **Laminar Cloud** (API Gateway + Lambda + Bedrock + DynamoDB): decisiones con el LLM y **agregación** con privacidad grupal.
-- **Laminar Teams** (React/Amplify): dashboard colectivo de tendencias, sin vistas individuales.
+- **Kandace Personal** (.NET 8/WPF): sensores, fricción, decisión, intervención, feedback, historial local y publicación agregada. El detalle nunca sale del equipo.
+- **Kandace Cloud** (API Gateway + Lambda + Bedrock + DynamoDB): decisiones con el LLM y **agregación** con privacidad grupal.
+- **Kandace Teams** (React/Amplify): dashboard colectivo de tendencias, sin vistas individuales.
 
 **Dos canales separados que no se mezclan:** decisiones (`/v1/decisions`, `/v1/feedback`) y agregación (`/v1/team-metrics`, `/v1/teams/{teamId}/summary`).
 

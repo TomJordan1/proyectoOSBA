@@ -20,7 +20,7 @@ Claude no debe:
 2. No desarrollar con root.
 3. Revisar créditos y expiración.
 4. Crear presupuestos de 1, 5 y 10 USD.
-5. Etiquetar `Project=Laminar`, `Environment=Dev`.
+5. Etiquetar `Project=Kandace`, `Environment=Dev`.
 6. Elegir región según modelo disponible.
 7. Verificar Converse y tool use.
 8. Anotar model ID exacto.

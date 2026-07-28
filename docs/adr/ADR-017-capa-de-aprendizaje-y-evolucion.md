@@ -6,7 +6,7 @@ Aceptada como **dirección de evolución**. Implementación **posterior al MVP**
 
 ## Contexto
 
-Se busca que Laminar elija la mejor intervención aprendiendo del historial del usuario, manteniendo el sistema **ligero, barato y privado**, y reduciendo llamadas al LLM con el uso. Durante el diseño se evaluaron varias técnicas y se aclararon confusiones comunes (RAG vs entrenamiento, caché de app vs prompt caching, detección vs decisión, pathfinding vs aprendizaje).
+Se busca que Kandace elija la mejor intervención aprendiendo del historial del usuario, manteniendo el sistema **ligero, barato y privado**, y reduciendo llamadas al LLM con el uso. Durante el diseño se evaluaron varias técnicas y se aclararon confusiones comunes (RAG vs entrenamiento, caché de app vs prompt caching, detección vs decisión, pathfinding vs aprendizaje).
 
 ## Decisión
 

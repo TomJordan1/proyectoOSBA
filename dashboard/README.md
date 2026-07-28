@@ -1,4 +1,4 @@
-# Dashboard — Laminar Teams
+# Dashboard — Kandace Teams
 
 Vista colectiva para la empresa (RR. HH., People Ops, PMO, líderes). Muestra tendencias grupales para mejorar procesos, **nunca** individuos, rankings ni evaluación de productividad.
 

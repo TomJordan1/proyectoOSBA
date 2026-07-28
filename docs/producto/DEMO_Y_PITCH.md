@@ -2,13 +2,13 @@
 
 ## Mensaje de una frase
 
-Laminar es un agente local-first que detecta fricción digital y utiliza Amazon Bedrock para decidir si debe intervenir, esperar o iniciar una recuperación breve, sin leer el trabajo del usuario.
+Kandace es un agente local-first que detecta fricción digital y utiliza Amazon Bedrock para decidir si debe intervenir, esperar o iniciar una recuperación breve, sin leer el trabajo del usuario.
 
 ## Guion de demo
 
 ### 1. Problema — 20 segundos
 
-“Los temporizadores interrumpen por horario y el bossware observa demasiado. Laminar busca el momento correcto sin capturar contenido.”
+“Los temporizadores interrumpen por horario y el bossware observa demasiado. Kandace busca el momento correcto sin capturar contenido.”
 
 ### 2. Estado estable — 20 segundos
 
@@ -66,4 +66,4 @@ Laminar es un agente local-first que detecta fricción digital y utiliza Amazon 
 
 ## Cierre
 
-“Laminar demuestra que un agente puede ser útil sin ser invasivo: observa menos, decide mejor y devuelve el control al usuario.”
+“Kandace demuestra que un agente puede ser útil sin ser invasivo: observa menos, decide mejor y devuelve el control al usuario.”

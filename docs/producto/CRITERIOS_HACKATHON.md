@@ -8,7 +8,7 @@ No buscar puntuación mediante cantidad de funciones. Cada evidencia debe conect
 
 ### Mensaje
 
-Laminar resuelve las interrupciones descontextualizadas y reduce la necesidad de monitoreo invasivo.
+Kandace resuelve las interrupciones descontextualizadas y reduce la necesidad de monitoreo invasivo.
 
 ### Evidencias
 

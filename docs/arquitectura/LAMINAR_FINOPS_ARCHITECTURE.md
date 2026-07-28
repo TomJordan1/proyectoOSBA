@@ -5,7 +5,7 @@
 
 ## 1. Principio rector
 
-Laminar no debe consultar un modelo por cada evento de teclado, ratón o ventana.
+Kandace no debe consultar un modelo por cada evento de teclado, ratón o ventana.
 
 ```text
 Eventos frecuentes y baratos

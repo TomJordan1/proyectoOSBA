@@ -1,4 +1,4 @@
-# Dev Container — Laminar
+# Dev Container — Kandace
 
 Entorno de desarrollo reproducible dentro de Docker. Trae **Node 20 + .NET 8 SDK + AWS SAM CLI + AWS CLI**, sin instalar nada en tu Windows. Al borrar el contenedor no queda nada.
 

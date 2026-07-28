@@ -1,4 +1,4 @@
-# ADR-019: Autenticación de Laminar Teams con Amazon Cognito
+# ADR-019: Autenticación de Kandace Teams con Amazon Cognito
 
 ## Estado
 
@@ -6,7 +6,7 @@ Aceptada (2026-07-23). Decisión tomada; implementación por fases y supervisada
 
 ## Contexto
 
-El dashboard de **Laminar Teams** (gestores/admins de cada organización) necesita autenticación real. Hoy el dashboard es un HTML estático que lee un JSON demo y la API solo se protege con una **API key** compartida (adecuada para el canal máquina-a-máquina del agente de escritorio, no para usuarios humanos).
+El dashboard de **Kandace Teams** (gestores/admins de cada organización) necesita autenticación real. Hoy el dashboard es un HTML estático que lee un JSON demo y la API solo se protege con una **API key** compartida (adecuada para el canal máquina-a-máquina del agente de escritorio, no para usuarios humanos).
 
 Requisitos: multi-tenant B2B2E (organización → equipos), coste ~0 (sin presupuesto), coherencia con el stack (AWS serverless: Lambda + API Gateway + DynamoDB) y con la postura *privacy-first*.
 
@@ -41,7 +41,7 @@ Motivos: es nativo del stack (autorizador de Cognito **integrado en API Gateway*
 
 ## Plan de implementación (por fases, supervisado)
 
-1. **Infra:** añadir `UserPool` + `UserPoolClient` + `UserPoolDomain` a `template.yaml`; declarar autorizador Cognito en `LaminarApi` y aplicarlo solo a `GET /teams/{teamId}/summary`. `sam validate`.
+1. **Infra:** añadir `UserPool` + `UserPoolClient` + `UserPoolDomain` a `template.yaml`; declarar autorizador Cognito en `KandaceApi` y aplicarlo solo a `GET /teams/{teamId}/summary`. `sam validate`.
 2. **Backend:** en `team-summary.handler`, leer `organization_id` de los *claims* del token y exigir que coincida con el `organization_id` de la query (rechazar 403 si no). Mantener compatibilidad para pruebas.
 3. **Despliegue supervisado:** `sam deploy`; crear un usuario de prueba con `custom:organization_id=org_demo`; obtener token vía Hosted UI; `curl` con `Authorization: Bearer`.
 4. **Dashboard:** conectar el login (Hosted UI) y las llamadas reales; luego decidir landing/deploy.

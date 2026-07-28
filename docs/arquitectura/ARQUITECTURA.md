@@ -29,18 +29,18 @@ Módulos sugeridos:
 ```text
 desktop-agent/
 ├── src/
-│   ├── Laminar.App/
-│   ├── Laminar.Domain/
-│   ├── Laminar.Sensors/
-│   ├── Laminar.Friction/
-│   ├── Laminar.Context/
-│   ├── Laminar.AgentClient/
-│   ├── Laminar.Interventions/
-│   └── Laminar.Persistence/
+│   ├── Kandace.App/
+│   ├── Kandace.Domain/
+│   ├── Kandace.Sensors/
+│   ├── Kandace.Friction/
+│   ├── Kandace.Context/
+│   ├── Kandace.AgentClient/
+│   ├── Kandace.Interventions/
+│   └── Kandace.Persistence/
 ├── tests/
-│   ├── Laminar.Domain.Tests/
-│   ├── Laminar.Friction.Tests/
-│   └── Laminar.Contract.Tests/
+│   ├── Kandace.Domain.Tests/
+│   ├── Kandace.Friction.Tests/
+│   └── Kandace.Contract.Tests/
 └── installer/
 ```
 

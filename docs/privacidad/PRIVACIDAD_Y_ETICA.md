@@ -2,7 +2,7 @@
 
 ## Posicionamiento correcto
 
-Laminar es **local-first, content-blind y privacy-by-design**.
+Kandace es **local-first, content-blind y privacy-by-design**.
 
 No usar “zero-knowledge” ni “anonimato matemáticamente imposible” sin una demostración formal.
 

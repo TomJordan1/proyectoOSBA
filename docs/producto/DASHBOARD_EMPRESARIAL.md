@@ -1,4 +1,4 @@
-# Laminar Teams
+# Kandace Teams
 
 ## Objetivo
 

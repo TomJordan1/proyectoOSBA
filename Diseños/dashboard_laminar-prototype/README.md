@@ -1,10 +1,10 @@
-# Laminar — prototipo SaaS B2B2E
+# Kandace — prototipo SaaS B2B2E
 
 Abra `index.html` en Chrome, Edge o Firefox. No requiere servidor ni instalación.
 
 ## Incluye
 - Dashboard organizacional agregado.
-- Simulación del acompañante Laminar Personal.
+- Simulación del acompañante Kandace Personal.
 - Gestión de dispositivos y revocación.
 - Flujo de activación por enlace temporal.
 - Políticas de privacidad.

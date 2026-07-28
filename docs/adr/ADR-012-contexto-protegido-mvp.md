@@ -6,7 +6,7 @@ Aceptada (2026-07-22).
 
 ## Contexto
 
-Laminar no debe interrumpir durante reuniones, presentaciones o pantalla compartida. Sin embargo, `PRIVACIDAD_Y_ETICA.md` prohíbe leer títulos de ventana, procesos personales o contenido. La detección automática y universal de "pantalla compartida" es técnicamente incierta sin cruzar esa línea, y no debe prometerse.
+Kandace no debe interrumpir durante reuniones, presentaciones o pantalla compartida. Sin embargo, `PRIVACIDAD_Y_ETICA.md` prohíbe leer títulos de ventana, procesos personales o contenido. La detección automática y universal de "pantalla compartida" es técnicamente incierta sin cruzar esa línea, y no debe prometerse.
 
 ## Decisión
 

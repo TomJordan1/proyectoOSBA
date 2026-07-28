@@ -20,7 +20,7 @@ Los usuarios confían más cuando ven exactamente qué datos se envían.
 
 ### H5 Mercado
 
-Un segmento aceptaría instalar Laminar y algunos pagarían por personalización o analítica personal.
+Un segmento aceptaría instalar Kandace y algunos pagarían por personalización o analítica personal.
 
 ## Validación técnica
 
