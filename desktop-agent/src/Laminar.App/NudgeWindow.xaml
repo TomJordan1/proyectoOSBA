@@ -4,9 +4,26 @@
         Title="Kanny" WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         ShowInTaskbar="False" ShowActivated="False" Topmost="True"
         SizeToContent="WidthAndHeight" ResizeMode="NoResize">
-    <!-- Aviso SUAVE: no roba el foco, no tapa la pantalla. La pausa completa solo si el
-         usuario acepta. Si lo ignora, se cierra solo (feedback: "ahora no"). -->
-    <Border Width="330" CornerRadius="16" Padding="18,15" Margin="14"
+    <!-- Aviso con anillo de cuenta regresiva (8 s). Poco texto. Botones rectangulares
+         con bordes redondeados. Al completarse el círculo entra la pausa (salvo Cancelar). -->
+    <Window.Resources>
+        <Style x:Key="RectBtn" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="10" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border Width="300" CornerRadius="18" Padding="22,18" Margin="14"
             BorderBrush="#2E78E1EB" BorderThickness="1">
         <Border.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -15,64 +32,27 @@
             </LinearGradientBrush>
         </Border.Background>
         <Border.Effect>
-            <DropShadowEffect BlurRadius="24" ShadowDepth="0" Opacity="0.5" Color="#000000"/>
+            <DropShadowEffect BlurRadius="26" ShadowDepth="0" Opacity="0.5" Color="#000000"/>
         </Border.Effect>
         <StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Ellipse Width="9" Height="9" Fill="#36E6EE" VerticalAlignment="Center">
-                    <Ellipse.Effect><BlurEffect Radius="5"/></Ellipse.Effect>
-                </Ellipse>
-                <TextBlock Text="Kanny" Foreground="#DFFEFF" FontWeight="SemiBold"
-                           Margin="10,0,0,0" VerticalAlignment="Center"/>
-            </StackPanel>
+            <TextBlock x:Name="Msg" Text="La pantalla se bloqueará en:" Foreground="#F5FBFF"
+                       FontSize="15" FontWeight="SemiBold" HorizontalAlignment="Center"/>
 
-            <TextBlock x:Name="Msg" Text="¿Un respiro conmigo?" Foreground="#F5FBFF"
-                       FontSize="15" TextWrapping="Wrap" Margin="0,10,0,0"/>
+            <!-- Anillo de cuenta regresiva -->
+            <Canvas Width="100" Height="100" HorizontalAlignment="Center" Margin="0,14,0,6">
+                <Ellipse Width="80" Height="80" Canvas.Left="10" Canvas.Top="10"
+                         Stroke="#20FFFFFF" StrokeThickness="6"/>
+                <Path x:Name="Arc" Stroke="#36E6EE" StrokeThickness="6"
+                      StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                <TextBlock x:Name="Count" Canvas.Left="0" Canvas.Top="30" Width="100" TextAlignment="Center"
+                           Text="6" Foreground="#EAFDFF" FontSize="30" FontWeight="Bold"/>
+            </Canvas>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
-                <Button x:Name="LaterBtn" Content="Ahora no" Click="OnDecline"
-                        Padding="12,6" Margin="0,0,8,0" Foreground="#9DB8C4"
-                        BorderThickness="0" Cursor="Hand">
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Background" Value="#12FFFFFF"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border CornerRadius="999" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#1EFFFFFF"/></Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-
-                <Button x:Name="PauseBtn" Content="Tomar pausa" Click="OnAccept"
-                        Padding="14,6" Foreground="#04121A" FontWeight="SemiBold"
-                        BorderThickness="0" Cursor="Hand">
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Background" Value="#36E6EE"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border CornerRadius="999" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#5AF0F6"/></Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0">
+                <Button Content="Cancelar" Click="OnDecline" Style="{StaticResource RectBtn}"
+                        Margin="0,0,8,0" Foreground="#CFE4EB" Background="#14FFFFFF"/>
+                <Button Content="Pausar ahora" Click="OnAccept" Style="{StaticResource RectBtn}"
+                        Foreground="#04121A" FontWeight="SemiBold" Background="#36E6EE"/>
             </StackPanel>
         </StackPanel>
     </Border>

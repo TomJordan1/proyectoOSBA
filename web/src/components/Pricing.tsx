@@ -1,9 +1,9 @@
 import { Check, Sparkles } from 'lucide-react'
 
 const PLANS = [
-  { name: 'Basic', price: '$0', description: 'Para usuarios individuales que quieren conocer a Kanny.', features: ['Estados AFK y Normal', 'Sugerencias de pausas', 'Procesamiento local'], cta: 'Empezar gratis' },
-  { name: 'Pro', price: '$19', unit: '/mes', description: 'Acceso completo a todos los estados y métricas avanzadas.', features: ['Todo lo incluido en Basic', 'Estados Erratic y Break', 'Historial y métricas personales', 'Configuración avanzada'], cta: 'Obtener Pro', featured: true },
-  { name: 'Enterprise', price: 'Personalizado', description: 'Integración para equipos completos con dashboard de RRHH.', features: ['Dashboard de bienestar', 'Tendencias agregadas', 'Despliegue administrado', 'Soporte prioritario'], cta: 'Contactar ventas' },
+  { name: 'Personal', price: '$0', description: 'Para personas que quieren conocer a Kanny. Sin costo, para siempre.', features: ['Acompañante Kanny en tu escritorio', 'Sugerencias de pausa', '100% local y privado'], cta: 'Descargar gratis' },
+  { name: 'Pro Tier', price: 'USD 5.00', unit: '/usuario/mes', description: 'Para empresas de 10 a 249 empleados.', features: ['Todo lo del plan Personal', 'Dashboard de bienestar del equipo', 'Tendencias agregadas y anónimas', 'Sin permanencia · facturación mensual'], cta: 'Hablar con ventas', featured: true },
+  { name: 'Enterprise Tier', price: 'USD 3.50', unit: '/usuario/mes', description: 'Para empresas de 250+ empleados.', features: ['Todo lo del plan Pro', 'Despliegue administrado', 'Privacidad avanzada (grupos < 5 ocultos)', 'Soporte prioritario'], cta: 'Contactar ventas' },
 ]
 
 export default function Pricing() {
@@ -13,7 +13,7 @@ export default function Pricing() {
       <div data-scroll-reveal className="mx-auto mb-10 max-w-3xl text-center">
         <span className="text-xs font-bold uppercase tracking-[0.28em] text-cyan-600 dark:text-cyan-300">Pricing</span>
         <h2 className="mt-4 text-4xl font-black tracking-tight text-slate-900 md:text-5xl dark:text-white">Empieza con calma. Crece a tu ritmo.</h2>
-        <p className="mx-auto mt-5 max-w-xl text-slate-600 dark:text-slate-400">Sin contratos ni sorpresas. Elige el nivel de acompañamiento que necesitas.</p>
+        <p className="mx-auto mt-5 max-w-xl text-slate-600 dark:text-slate-400">Sin permanencia y facturación mensual. Precios por debajo de opciones más invasivas como Teramind o Time Doctor.</p>
       </div>
 
       <div className="pricing-deck mx-auto grid max-w-6xl items-stretch gap-6 py-4 md:grid-cols-3 md:gap-7 lg:gap-8 md:[perspective:1200px]">
@@ -25,7 +25,7 @@ export default function Pricing() {
               <div className="mt-7 flex items-end gap-1"><span className={`${plan.price.length > 5 ? 'text-3xl' : 'text-5xl'} font-black tracking-tight text-slate-900 dark:text-white`}>{plan.price}</span>{plan.unit && <span className="pb-1 text-sm text-slate-500 dark:text-slate-400">{plan.unit}</span>}</div>
               <p className="mt-5 min-h-[3rem] text-sm leading-relaxed text-slate-600 dark:text-slate-400">{plan.description}</p>
               <ul className="my-7 space-y-3">{plan.features.map((feature) => <li key={feature} className="flex items-start gap-3 text-xs text-slate-700 dark:text-slate-300"><Check className="mt-0.5 h-4 w-4 shrink-0 text-cyan-600 dark:text-cyan-300" />{feature}</li>)}</ul>
-              <a href={plan.name === 'Enterprise' ? '#contact' : '#download'} className={`absolute bottom-7 left-7 right-7 rounded-xl px-5 py-3 text-center text-xs font-bold transition ${plan.featured ? 'glow-button bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:-translate-y-1' : 'border border-black/10 bg-black/[0.02] text-slate-700 hover:border-cyan-500/30 hover:text-slate-900 dark:border-white/10 dark:bg-white/[0.03] dark:text-slate-200 dark:hover:border-cyan-300/30 dark:hover:text-white'}`}>{plan.cta}</a>
+              <a href={plan.name === 'Personal' ? '#download' : '#contact'} className={`absolute bottom-7 left-7 right-7 rounded-xl px-5 py-3 text-center text-xs font-bold transition ${plan.featured ? 'glow-button bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:-translate-y-1' : 'border border-black/10 bg-black/[0.02] text-slate-700 hover:border-cyan-500/30 hover:text-slate-900 dark:border-white/10 dark:bg-white/[0.03] dark:text-slate-200 dark:hover:border-cyan-300/30 dark:hover:text-white'}`}>{plan.cta}</a>
             </article>
           </div>
         ))}

@@ -95,7 +95,7 @@
 
         <!-- Globo de diálogo (Kanny habla) -->
         <StackPanel x:Name="DialogueRoot" VerticalAlignment="Top" HorizontalAlignment="Center"
-                    Margin="0,120,0,0" MaxWidth="480" Opacity="0" RenderTransformOrigin="0.5,0.5">
+                    Margin="0,120,0,0" MaxWidth="500" Opacity="0" RenderTransformOrigin="0.5,0.5">
             <StackPanel.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform x:Name="BubbleScale" ScaleX="0.92" ScaleY="0.92"/>

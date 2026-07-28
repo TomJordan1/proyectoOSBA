@@ -19,8 +19,8 @@ public partial class RecoveryOverlayV2 : Window
 {
     private readonly DialoguePool _pool = new();
     private readonly DispatcherTimer _tick = new() { Interval = TimeSpan.FromSeconds(1) };
-    // ~0.87x de velocidad (antes 30 ms) + pausas en puntuación para fluidez.
-    private const int TypeBaseMs = 35;
+    // Tecleo pausado (más lento) + pausas en puntuación para lectura tranquila.
+    private const int TypeBaseMs = 60;
     private readonly DispatcherTimer _typer = new() { Interval = TimeSpan.FromMilliseconds(TypeBaseMs) };
     private readonly DispatcherTimer _hide = new();
     private int _remaining;
@@ -70,7 +70,7 @@ public partial class RecoveryOverlayV2 : Window
         if (_introDone || _introIdx >= _pool.Intro.Length) { _introDone = true; return; }
         Say(_pool.Intro[_introIdx]);
         _introIdx++;
-        var t = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3.6) };
+        var t = new DispatcherTimer { Interval = TimeSpan.FromSeconds(6.5) };
         t.Tick += (_, _) => { t.Stop(); SayIntroNext(); };
         t.Start();
     }
@@ -84,7 +84,7 @@ public partial class RecoveryOverlayV2 : Window
             && Scene.BreathPhase != _lastPhase)
         {
             _lastPhase = Scene.BreathPhase;
-            if (_pool.Chance(0.55)) Say(_pool.Next(Scene.BreathPhase));
+            if (_pool.Chance(0.4)) Say(_pool.Next(Scene.BreathPhase));
         }
     }
 
@@ -107,9 +107,9 @@ public partial class RecoveryOverlayV2 : Window
             LineText.Text = _fullLine.Substring(0, _typeIdx);
             // Pausa natural según el carácter recién tecleado (fluidez, no de golpe).
             char c = _fullLine[_typeIdx - 1];
-            int ms = c is '.' or '!' or '?' or '…' ? 300
-                   : c is ',' or ';' or ':' ? 170
-                   : c == ' ' ? 55
+            int ms = c is '.' or '!' or '?' or '…' ? 480
+                   : c is ',' or ';' or ':' ? 260
+                   : c == ' ' ? 80
                    : TypeBaseMs;
             _typer.Interval = TimeSpan.FromMilliseconds(ms);
             return;
@@ -119,8 +119,8 @@ public partial class RecoveryOverlayV2 : Window
         if (_pending != null) { SetChoices(_pending); _pending = null; }
         else
         {
-            // Persiste la frase el tiempo suficiente para leerla con calma (según su largo).
-            double hold = Math.Min(9.0, 3.4 + _fullLine.Length * 0.06);
+            // Persiste bastante para leerla con calma (según su largo).
+            double hold = Math.Min(13.0, 5.5 + _fullLine.Length * 0.09);
             _hide.Interval = TimeSpan.FromSeconds(hold);
             _hide.Start();
         }

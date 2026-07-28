@@ -19,12 +19,12 @@ public sealed class RealMetricsSource : IMetricsSource, IDisposable
     private int _session;
     private int _lastIntervention = 90;
     private const double IdleAfkSeconds = 120; // 2 min sin actividad = AFK
-    private const double Threshold = 0.78;
+    private const double Threshold = 0.70;      // alineado con FrictionOptions (más responsivo)
     // Fatiga por tiempo (tunable): tras FatigueStartMinutes sin pausa, sube el score
     // gradualmente hasta +FatigueMaxBoost a lo largo de FatigueRampMinutes.
-    private const double FatigueStartMinutes = 45;
-    private const double FatigueRampMinutes = 60;
-    private const double FatigueMaxBoost = 0.15;
+    private const double FatigueStartMinutes = 12;
+    private const double FatigueRampMinutes = 30;
+    private const double FatigueMaxBoost = 0.20;
 
     public MetricSample Sample()
     {
@@ -46,7 +46,14 @@ public sealed class RealMetricsSource : IMetricsSource, IDisposable
         {
             // Recalibrado: exige corroboración (2+ señales) y baja el peso del cursor.
             // La fórmula pura vive en Laminar.Friction.FrictionScorer (testeable sin WPF).
-            score = Laminar.Friction.FrictionScorer.Score(zDel, zSw, zCur);
+            double zScore = Laminar.Friction.FrictionScorer.Score(zDel, zSw, zCur);
+
+            // Actividad DIRECTA del tick (reacciona siempre, no solo la 1ª vez, y evita
+            // el "refractario" de la línea base): correcciones y cambios de ventana pesan;
+            // espacios (tecleo prolongado) y cursor, poco. Se toma el máximo con la anomalía.
+            double act = s.Corrections * 0.12 + s.Switches * 0.12 + s.Typing * 0.008 + s.CursorTurns * 0.028;
+            double activityScore = Math.Clamp(0.30 + act, 0.0, 0.97);
+            score = Math.Max(zScore, activityScore);
 
             // Fatiga por tiempo (bienestar): tras un rato largo sin pausa, empuja el score
             // para que una fricción moderada sí dispare en jornadas largas. No dispara solo
@@ -77,7 +84,7 @@ public sealed class RealMetricsSource : IMetricsSource, IDisposable
         private double _mean;
         private double _var;
         private bool _init;
-        private const double Alpha = 0.1; // adapta más rápido: el pico decae y no se queda "pegado"
+        private const double Alpha = 0.015; // historial largo / curva casi plana: casi no se "acostumbra" (patrones repetitivos siguen destacando)
 
         public double Update(double x)
         {

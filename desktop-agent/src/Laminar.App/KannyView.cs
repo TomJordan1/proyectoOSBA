@@ -167,7 +167,7 @@ public sealed class KannyView : FrameworkElement
     {
         if (_break) return;
         s = Math.Clamp(s, 0, 1);
-        double[] st = s <= 0.25 ? Afk : (s < 0.6 ? Normal : Erratic);
+        double[] st = s <= 0.22 ? Afk : (s < 0.45 ? Normal : Erratic); // deforma antes (más presente)
         Array.Copy(st, _target, N);
     }
 

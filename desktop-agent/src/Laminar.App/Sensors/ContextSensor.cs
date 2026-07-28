@@ -14,10 +14,9 @@ public sealed class ContextSensor
     [StructLayout(LayoutKind.Sequential)]
     private struct RECT { public int Left, Top, Right, Bottom; }
 
-    [DllImport("user32.dll")] private static extern IntPtr GetForegroundWindow();
-    [DllImport("user32.dll")] private static extern bool GetWindowRect(IntPtr hWnd, out RECT r);
-    [DllImport("user32.dll")] private static extern int GetSystemMetrics(int nIndex);
-    private const int SM_CXSCREEN = 0, SM_CYSCREEN = 1;
+    // Estado de notificaciones de Windows: distingue pantalla completa REAL / presentación
+    // de una simple ventana maximizada. (QUNS_RUNNING_D3D_FULL_SCREEN=3, QUNS_PRESENTATION_MODE=4)
+    [DllImport("shell32.dll")] private static extern int SHQueryUserNotificationState(out int state);
 
     /// <summary>Cámara o micrófono en uso = probable reunión/llamada.</summary>
     public bool MeetingActive() => InUse("webcam") || InUse("microphone");
@@ -51,14 +50,19 @@ public sealed class ContextSensor
     private static bool IsActive(RegistryKey k)
         => k.GetValue("LastUsedTimeStop") is long stop && stop == 0;
 
-    /// <summary>La ventana en primer plano ocupa toda la pantalla.</summary>
+    /// <summary>
+    /// App a PANTALLA COMPLETA REAL o modo presentación (juego/vídeo/diapositivas),
+    /// NO una simple ventana maximizada. Usa el estado de notificaciones de Windows,
+    /// el mismo criterio que "No molestar" del sistema.
+    /// </summary>
     public bool FullscreenActive()
     {
-        var fg = GetForegroundWindow();
-        if (fg == IntPtr.Zero) return false;
-        if (!GetWindowRect(fg, out RECT r)) return false;
-        int sw = GetSystemMetrics(SM_CXSCREEN);
-        int sh = GetSystemMetrics(SM_CYSCREEN);
-        return (r.Right - r.Left) >= sw && (r.Bottom - r.Top) >= sh;
+        try
+        {
+            if (SHQueryUserNotificationState(out int s) == 0)
+                return s == 3 || s == 4; // D3D fullscreen o presentación
+        }
+        catch { /* ante cualquier duda, asume que NO está a pantalla completa */ }
+        return false;
     }
 }

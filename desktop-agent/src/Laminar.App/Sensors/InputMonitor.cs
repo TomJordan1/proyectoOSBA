@@ -25,6 +25,7 @@ public sealed class InputMonitor : IDisposable
 
     private const int VK_BACK = 0x08;
     private const int VK_DELETE = 0x2E;
+    private const int VK_SPACE = 0x20; // barra espaciadora: proxy no invasivo de "tecleo prolongado"
 
     private readonly Timer _poll;
     private readonly object _lock = new();
@@ -33,10 +34,11 @@ public sealed class InputMonitor : IDisposable
     private long _corrections;
     private long _switches;
     private long _cursorTurns;
+    private long _typing;            // pulsaciones de espacio (tecleo prolongado)
     private double _cursorDistance;
 
     // Estado de detección de flancos.
-    private bool _backDown, _delDown;
+    private bool _backDown, _delDown, _spaceDown;
     private IntPtr _lastForeground;
     private POINT _lastCursor;
     private int _lastDx, _lastDy;
@@ -53,6 +55,7 @@ public sealed class InputMonitor : IDisposable
       {
         bool back = (GetAsyncKeyState(VK_BACK) & 0x8000) != 0;
         bool del = (GetAsyncKeyState(VK_DELETE) & 0x8000) != 0;
+        bool space = (GetAsyncKeyState(VK_SPACE) & 0x8000) != 0;
         IntPtr fg = GetForegroundWindow();
         bool gotCursor = GetCursorPos(out POINT p);
 
@@ -62,6 +65,10 @@ public sealed class InputMonitor : IDisposable
             if (back && !_backDown) _corrections++;
             if (del && !_delDown) _corrections++;
             _backDown = back; _delDown = del;
+
+            // Espacio: solo el conteo (nunca qué se escribe).
+            if (space && !_spaceDown) _typing++;
+            _spaceDown = space;
 
             // Cambio de ventana en primer plano (solo el handle, nunca el título).
             if (fg != IntPtr.Zero && _lastForeground != IntPtr.Zero && fg != _lastForeground) _switches++;
@@ -100,15 +107,15 @@ public sealed class InputMonitor : IDisposable
         return (GetTickCount() - lii.dwTime) / 1000.0;
     }
 
-    public sealed record Snapshot(long Corrections, long Switches, long CursorTurns, double CursorDistance, double IdleSeconds);
+    public sealed record Snapshot(long Corrections, long Switches, long CursorTurns, long Typing, double CursorDistance, double IdleSeconds);
 
     /// <summary>Devuelve los acumulados desde la última llamada y los reinicia.</summary>
     public Snapshot TakeSnapshot()
     {
         lock (_lock)
         {
-            var s = new Snapshot(_corrections, _switches, _cursorTurns, _cursorDistance, IdleSeconds());
-            _corrections = 0; _switches = 0; _cursorTurns = 0; _cursorDistance = 0;
+            var s = new Snapshot(_corrections, _switches, _cursorTurns, _typing, _cursorDistance, IdleSeconds());
+            _corrections = 0; _switches = 0; _cursorTurns = 0; _typing = 0; _cursorDistance = 0;
             return s;
         }
     }

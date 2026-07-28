@@ -143,10 +143,9 @@ public partial class App : WpfApplication
         int dur = d.Arguments.DurationSeconds ?? 45;
         bool reduced = req.Preferences.ReducedMotion;
 
-        _nudge = new NudgeWindow(RecoveryTips.Random());
+        _nudge = new NudgeWindow(""); // sin frase: solo "La pantalla se bloqueará en:" + el anillo
         _nudge.Accepted += (_, _) => { CloseNudge(); OpenRecovery(dur, reduced); };
         _nudge.Declined += (_, _) => { CloseNudge(); _backoff.RegisterDeclined(); ApplySnooze(); _mascot?.Say("Sin problema, seguimos."); };
-        _nudge.Ignored  += (_, _) => { CloseNudge(); _backoff.RegisterIgnored();  ApplySnooze(); };
         _nudge.Show();
 
         // Gracia base: no volver a ofrecer mientras el aviso está en pantalla.
